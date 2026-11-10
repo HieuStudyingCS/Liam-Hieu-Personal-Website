@@ -5,7 +5,7 @@ pubDate: 2026-11-05
 tags: [bayesian optimization, gaussian process, black-box optimization]
 series: "Black-box Optimization 101"
 cover: ./cover.svg
-draft: false
+draft: true
 ---
 
 > Sample post. It exists only in English, so the language switch on this page shows how the site handles a post without a translation.

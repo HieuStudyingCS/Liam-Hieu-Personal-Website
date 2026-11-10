@@ -5,7 +5,7 @@ pubDate: 2026-11-01
 tags: [black-box optimization, bayesian optimization, evolution strategies]
 series: "Black-box Optimization 101"
 cover: ./cover.svg
-draft: false
+draft: true
 ---
 
 > Đây là bài mẫu đi kèm website. Bài dùng đủ các tính năng của blog — công thức, code, bảng, chú thích, link sang bài khác — để bạn sao chép cấu trúc, rồi sửa hoặc xóa đi.

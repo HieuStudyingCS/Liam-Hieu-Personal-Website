@@ -5,7 +5,7 @@ pubDate: 2026-11-08
 tags: [convex optimization, first-order methods, non-smooth optimization, proximal gradient, lasso]
 series: "First-order Methods"
 cover: ./assets/Frank_Wolfe_vs_Projected_Gradient.webm.jpg
-draft: true
+draft: false
 ---
 
 ## Introduction
