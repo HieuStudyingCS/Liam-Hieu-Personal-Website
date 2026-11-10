@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, pick, useTranslations, type Lang, type UIKey } from '../i18n/ui';
+import { inlineMd } from '../utils/text';
+
+interface Props {
+  items: CollectionEntry<'news'>[];
+  lang: Lang;
+}
+const { items, lang } = Astro.props;
+const t = useTranslations(lang);
+const badgeClass: Record<string, string> = {
+  paper: 'badge', award: 'badge badge-warm', education: 'badge badge-muted', talk: 'badge', project: 'badge badge-muted', life: 'badge badge-muted',
+};
+---
+<ul class="news-list">
+  {items.map((n) => (
+    <li class="news-item" data-type={n.data.type}>
+      <time class="news-date" datetime={n.data.date.toISOString()}>{formatDate(n.data.date, lang, 'month')}</time>
+      <div class="news-text">
+        <span class:list={['news-type', badgeClass[n.data.type]]}>{t(`news.type.${n.data.type}` as UIKey)}</span>
+        <span set:html={inlineMd(pick(n.data.text, lang))} />
+        {n.data.link && <> · <a href={n.data.link}>→</a></>}
+      </div>
+    </li>
+  ))}
+</ul>

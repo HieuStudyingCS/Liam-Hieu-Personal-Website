@@ -1,0 +1,13 @@
+---
+import BlogIndex from '../../../../views/BlogIndex.astro';
+import { allTags, getPosts, langOf } from '../../../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = (await getPosts()).filter((p) => langOf(p) === 'vi');
+  return allTags(posts).map((t) => ({ params: { tag: t.slug }, props: { name: t.tag } }));
+}
+
+const { tag } = Astro.params;
+const { name } = Astro.props as { name: string };
+---
+<BlogIndex lang="vi" tag={{ slug: tag!, name }} />

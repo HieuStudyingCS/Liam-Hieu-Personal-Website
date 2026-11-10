@@ -1,0 +1,33 @@
+# News — mới nhất đặt trên cùng. Mỗi mục cần "id" không trùng (gợi ý: ngày + vài chữ).
+# type: paper | award | education | talk | project | life
+# text hỗ trợ **đậm**, *nghiêng*, `code` và [link](https://...)
+# - id: 2026-11-launch
+#   date: 2026-11-07
+#   type: project
+#   text:
+#     en: Launched this website — notes on **black-box optimization** live on the [blog](/blog).
+#     vi: Ra mắt website này — các ghi chép về **black-box optimization** nằm ở [blog](/vi/blog).
+# - id: 2026-10-example
+#   date: 2026-10-15
+#   type: paper
+#   text:
+#     en: "A paper was accepted at an example workshop."
+#     vi: "Một bài báo được nhận ở một workshop."
+- id: 2026-06-quantvn-scholarship
+  date: 2026-06-01
+  type: award
+  text:
+    en: Received the [QuantVN Scholarship](https://drive.google.com/file/d/1jOZVsz6O7OdP4-VivTYLe5mD4CBvbCzN/view).
+    vi: Nhận [học bổng QuantVN](https://drive.google.com/file/d/1jOZVsz6O7OdP4-VivTYLe5mD4CBvbCzN/view).
+- id: 2025-09-example
+  date: 2025-09-01
+  type: education
+  text:
+    en: "Started my B.Sc. at UIT, VNU-HCM."
+    vi: "Bắt đầu học cử nhân tại UIT, ĐHQG-HCM."
+- id: 2022-08-HighSchool
+  date: 2022-08-31
+  type: education
+  text: 
+    en: "Started study @ Le Quy Don High School for the Gifted, Ninh Thuan"
+    vi: "Bắt đầu học tại Trường chuyên Lê Quý Đôn, Ninh Thuận"

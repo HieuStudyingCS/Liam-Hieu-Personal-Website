@@ -1,0 +1,107 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import NewsList from '../components/NewsList.astro';
+import PubItem from '../components/PubItem.astro';
+import { formatDate, localize, pick, useTranslations, type Lang } from '../i18n/ui';
+import { inlineMd } from '../utils/text';
+import { getPosts, postUrl, readingTime } from '../utils/posts';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const profile = (await getEntry('profile', 'me'))!.data;
+const news = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 5);
+const posts = (await getPosts(lang)).slice(0, 3);
+const pubs = (await getCollection('publications', (p) => p.data.selected)).sort((a, b) => b.data.year - a.data.year);
+
+const affiliation = pick(profile.affiliation, lang);
+const cards = [
+  { title: t('nav.portfolio'), text: t('card.portfolio'), href: localize('/portfolio', lang) },
+  { title: t('nav.publications'), text: t('card.publications'), href: localize('/publications', lang) },
+  { title: t('nav.blog'), text: t('card.blog'), href: localize('/blog', lang) },
+];
+---
+<BaseLayout lang={lang}>
+  <div class="container">
+    <section class="hero">
+      <div>
+        <h1>{pick(profile.name, lang)}</h1>
+        <p class="role">
+          {pick(profile.role, lang)} @
+          {profile.affiliationUrl ? <a href={profile.affiliationUrl} target="_blank" rel="noopener">{affiliation}</a> : affiliation}
+        </p>
+        <p class="statement" set:html={inlineMd(pick(profile.statement, lang))} />
+        <div class="btn-row">
+          {profile.email && <a class="btn btn-primary" href={`mailto:${profile.email}`}><Icon name="mail" /> {t('btn.email')}</a>}
+          {profile.github && <a class="btn" href={profile.github} target="_blank" rel="noopener"><Icon name="github" /> GitHub</a>}
+          {profile.linkedin && <a class="btn" href={profile.linkedin} target="_blank" rel="noopener"><Icon name="linkedin" /> LinkedIn</a>}
+          {profile.scholar && <a class="btn" href={profile.scholar} target="_blank" rel="noopener"><Icon name="scholar" /> Scholar</a>}
+          {profile.cv && <a class="btn" href={profile.cv} target="_blank" rel="noopener"><Icon name="file" /> {t('btn.cv')}</a>}
+        </div>
+      </div>
+      {profile.avatar && (
+        <div class="avatar-wrap">
+          <img class="avatar" src={profile.avatar} alt={pick(profile.name, lang)} width="220" height="220" />
+        </div>
+      )}
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>{t('home.explore')}</h2></div>
+      <div class="cards">
+        {cards.map((c) => (
+          <a class="card" href={c.href}>
+            <h3>{c.title} <span class="arrow">→</span></h3>
+            <p>{c.text}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section two-col">
+      <div>
+        <div class="section-head">
+          <h2>{t('home.news')}</h2>
+          <a href={localize('/news', lang)}>{t('home.allNews')} →</a>
+        </div>
+        <NewsList items={news} lang={lang} />
+      </div>
+      <div>
+        <div class="section-head">
+          <h2>{t('home.posts')}</h2>
+          <a href={localize('/blog', lang)}>{t('home.allPosts')} →</a>
+        </div>
+        {posts.length === 0 ? (
+          <p class="muted">{t('blog.empty')}</p>
+        ) : (
+          <ul class="compact-posts">
+            {posts.map((p) => (
+              <li>
+                <a href={postUrl(p)}>{p.data.title}</a>
+                <div class="post-meta">
+                  <time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate, lang)}</time>
+                  <span>{readingTime(p)} {t('blog.minRead')}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+
+    {pubs.length > 0 && (
+      <section class="section">
+        <div class="section-head">
+          <h2>{t('home.pubs')}</h2>
+          <a href={localize('/publications', lang)}>{t('home.allPubs')} →</a>
+        </div>
+        <ul class="pub-list">
+          {pubs.map((p) => <PubItem pub={p} lang={lang} authorNames={profile.authorNames} />)}
+        </ul>
+      </section>
+    )}
+  </div>
+</BaseLayout>

@@ -1,0 +1,28 @@
+---
+import { pick, type Lang } from '../i18n/ui';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  lang: Lang;
+  profile: CollectionEntry<'profile'>['data'];
+}
+const { lang, profile } = Astro.props;
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>@ {year} {pick(profile.name, 'vi')}. All rights reserved</span>
+    <div class="footer-links">
+      {profile.email && <a href={`mailto:${profile.email}`}>Email</a>}
+      {profile.github && <a href={profile.github} target="_blank" rel="noopener">GitHub</a>}
+      {profile.scholar && <a href={profile.scholar} target="_blank" rel="noopener">Google Scholar</a>}
+      {profile.orcid && <a href={profile.orcid} target="_blank" rel="noopener">ORCID</a>}
+      {profile.linkedin && <a href={profile.linkedin} target="_blank" rel="noopener">LinkedIn</a>}
+      {profile.cv && <a href={profile.cv} target="_blank" rel="noopener">CV</a>}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-links a { display: inline-flex; align-items: center; gap: 4px; }
+</style>

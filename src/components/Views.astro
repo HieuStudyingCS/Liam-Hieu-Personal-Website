@@ -1,0 +1,28 @@
+---
+import { VIEWS } from '../config';
+
+interface Props { slug: string; label: string }
+const { slug, label } = Astro.props;
+---
+{VIEWS.enabled && (
+  <span class="views" data-views-slug={slug} data-endpoint={VIEWS.endpoint} hidden>
+    <span data-views-count></span> {label}
+  </span>
+)}
+
+<script>
+  // Gọi API đếm lượt xem; nếu lỗi thì giữ ẩn (không bao giờ hiện "NaN")
+  document.querySelectorAll<HTMLElement>('[data-views-slug]').forEach(async (el) => {
+    try {
+      const res = await fetch(`${el.dataset.endpoint}/${encodeURIComponent(el.dataset.viewsSlug ?? '')}`, { method: 'POST' });
+      if (!res.ok) return;
+      const data = (await res.json()) as { views?: number };
+      if (typeof data.views !== 'number' || !Number.isFinite(data.views)) return;
+      const count = el.querySelector('[data-views-count]');
+      if (count) count.textContent = data.views.toLocaleString();
+      el.hidden = false;
+    } catch {
+      /* API chưa sẵn sàng: giữ ẩn */
+    }
+  });
+</script>

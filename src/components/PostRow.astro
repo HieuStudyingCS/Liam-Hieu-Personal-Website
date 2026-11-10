@@ -1,0 +1,49 @@
+---
+import { Image } from 'astro:assets';
+import { formatDate, useTranslations, type Lang } from '../i18n/ui';
+import { langOf, postUrl, readingTime, tagUrl, type Post } from '../utils/posts';
+
+interface Props {
+  post: Post;
+  lang: Lang;
+  /** Bài thuộc ngôn ngữ còn lại (ẩn mặc định, bật bằng công tắc) */
+  otherLang?: boolean;
+}
+const { post, lang, otherLang = false } = Astro.props;
+const t = useTranslations(lang);
+const postLang = langOf(post);
+const href = postUrl(post);
+const initials = post.data.title
+  .split(/\s+/)
+  .filter((w) => /^[A-Za-zÀ-ỹ0-9]/.test(w))
+  .slice(0, 2)
+  .map((w) => w[0]!.toUpperCase())
+  .join('');
+---
+<li class:list={['post-row', { 'is-other-lang': otherLang }]}>
+  <a class="post-thumb" href={href} tabindex="-1" aria-hidden="true">
+    {post.data.cover ? (
+      <Image src={post.data.cover} alt="" width={480} loading="lazy" />
+    ) : (
+      <div class="thumb-fallback">{initials}</div>
+    )}
+  </a>
+  <div>
+    <h3><a href={href} hreflang={postLang}>{post.data.title}</a></h3>
+    {post.data.description && <p class="post-desc">{post.data.description}</p>}
+    <div class="post-meta">
+      <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, lang)}</time>
+      <span>{readingTime(post)} {t('blog.minRead')}</span>
+      {post.data.series && <span>{t('blog.series')}: {post.data.series}</span>}
+      <span class="badge badge-muted">{postLang.toUpperCase()}</span>
+      {post.data.draft && <span class="badge badge-warm">DRAFT</span>}
+    </div>
+    {post.data.tags.length > 0 && (
+      <ul class="tag-list">
+        {post.data.tags.map((tag) => (
+          <li><a href={tagUrl(tag, postLang)}>{tag}</a></li>
+        ))}
+      </ul>
+    )}
+  </div>
+</li>

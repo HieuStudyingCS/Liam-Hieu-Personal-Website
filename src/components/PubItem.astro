@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { pick, useTranslations, type Lang, type UIKey } from '../i18n/ui';
+import { escapeHtml } from '../utils/text';
+
+interface Props {
+  pub: CollectionEntry<'publications'>;
+  lang: Lang;
+  authorNames: string[];
+  showThumb?: boolean;
+}
+const { pub, lang, authorNames, showThumb = true } = Astro.props;
+const t = useTranslations(lang);
+const d = pub.data;
+const mine = new Set(authorNames.map((n) => n.toLowerCase()));
+
+// In đậm tên của bạn; giữ dấu * (đồng tác giả chính)
+const authorsHtml = d.authors
+  .map((a) => {
+    const name = a.replace(/[*†]+$/, '').trim();
+    const mark = a.slice(name.length);
+    const safe = escapeHtml(name) + (mark ? `<sup>${escapeHtml(mark)}</sup>` : '');
+    return mine.has(name.toLowerCase()) ? `<strong>${safe}</strong>` : safe;
+  })
+  .join(', ');
+
+const linkLabels: Record<string, string> = {
+  paper: 'Paper', arxiv: 'arXiv', pdf: 'PDF', code: 'Code', project: 'Project', blog: 'Blog', slides: 'Slides', poster: 'Poster',
+};
+const links = Object.entries(d.links).filter((e): e is [string, string] => Boolean(e[1]));
+const mainLink = d.links.paper ?? d.links.arxiv ?? d.links.pdf ?? d.links.project;
+const thumb = showThumb && d.thumbnail;
+---
+<li class:list={['pub', { 'no-thumb': !thumb }]} data-category={d.status}>
+  {thumb && <img class="pub-thumb" src={d.thumbnail} alt="" loading="lazy" />}
+  <div>
+    <h3 class="pub-title">
+      {mainLink ? <a href={mainLink} target="_blank" rel="noopener">{d.title}</a> : d.title}
+    </h3>
+    <p class="pub-authors" set:html={authorsHtml} />
+    <p class="pub-venue">
+      {d.venueShort && <span class="badge">{d.venueShort}</span>}
+      <em>{d.venue}</em>
+      {d.status !== 'published' && <span class="badge badge-warm">{t(`status.${d.status}` as UIKey)}</span>}
+    </p>
+    {d.note && <p class="pub-note">{pick(d.note, lang)}</p>}
+    <div class="pub-actions">
+      {links.map(([key, url]) => (
+        <a href={url} target={url.startsWith('/') ? undefined : '_blank'} rel="noopener">{linkLabels[key] ?? key}</a>
+      ))}
+      {d.bibtex && (
+        <details>
+          <summary>BibTeX</summary>
+          <div class="code-box">
+            <pre><code>{d.bibtex}</code></pre>
+            <button type="button" class="copy-btn" data-copy-source data-copied={t('blog.copied')}>{t('blog.copy')}</button>
+          </div>
+        </details>
+      )}
+    </div>
+  </div>
+</li>

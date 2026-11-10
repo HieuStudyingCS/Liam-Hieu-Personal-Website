@@ -1,0 +1,93 @@
+---
+import Icon from './Icon.astro';
+import { localize, otherLang, stripLang, useTranslations, type Lang, type UIKey } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  brand: string;
+  altHref: string;
+  altMissing?: boolean;
+}
+const { lang, brand, altHref, altMissing = false } = Astro.props;
+const t = useTranslations(lang);
+const other = otherLang(lang);
+const current = stripLang(Astro.url.pathname).replace(/\/$/, '') || '/';
+
+const items: { key: UIKey; path: string }[] = [
+  { key: 'nav.home', path: '/' },
+  { key: 'nav.portfolio', path: '/portfolio' },
+  { key: 'nav.publications', path: '/publications' },
+  { key: 'nav.blog', path: '/blog' },
+  { key: 'nav.news', path: '/news' },
+];
+const isActive = (path: string) => (path === '/' ? current === '/' : current === path || current.startsWith(`${path}/`));
+---
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href={localize('/', lang)}>{brand}</a>
+
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <ul>
+        {items.map((item) => (
+          <li>
+            <a href={localize(item.path, lang)} aria-current={isActive(item.path) ? 'page' : undefined}>{t(item.key)}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <button class="icon-btn" type="button" data-search-open aria-label={t('search.button')} title={t('search.button')}>
+        <Icon name="search" />
+        <kbd>Ctrl K</kbd>
+      </button>
+      <a
+        class:list={['icon-btn', 'lang-switch', { 'is-missing': altMissing }]}
+        href={altHref}
+        hreflang={other}
+        title={altMissing ? t('lang.unavailable') : t('lang.switch')}
+        data-lang-switch={other}
+      >
+        <span class={lang === 'en' ? 'current' : ''}>EN</span><span class="sep">/</span><span class={lang === 'vi' ? 'current' : ''}>VI</span>
+      </a>
+      <button class="icon-btn" type="button" id="theme-toggle" aria-label={t('theme.toggle')} title={t('theme.toggle')}>
+        <Icon name="moon" class="theme-icon-light" />
+        <Icon name="sun" class="theme-icon-dark" />
+      </button>
+      <button class="icon-btn menu-btn" type="button" aria-controls="site-nav" aria-expanded="false" aria-label={t('nav.menu')}>
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const root = document.documentElement;
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      /* chế độ riêng tư: bỏ qua */
+    }
+    document.dispatchEvent(new CustomEvent('themechange', { detail: next }));
+  });
+
+  // Ghi nhớ ngôn ngữ người dùng chọn
+  document.querySelector('[data-lang-switch]')?.addEventListener('click', (e) => {
+    const lang = (e.currentTarget as HTMLElement).dataset.langSwitch;
+    try {
+      if (lang) localStorage.setItem('lang', lang);
+    } catch {
+      /* bỏ qua */
+    }
+  });
+
+  const menuBtn = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const nav = document.getElementById('site-nav');
+  menuBtn?.addEventListener('click', () => {
+    const open = nav?.classList.toggle('is-open') ?? false;
+    menuBtn.setAttribute('aria-expanded', String(open));
+  });
+</script>

@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useTranslations } from '../i18n/ui';
+
+const isVi = Astro.url.pathname.startsWith('/vi');
+const lang = isVi ? 'vi' : 'en';
+const t = useTranslations(lang);
+---
+<BaseLayout lang={lang} title={t('404.title')} alternate={isVi ? '/' : '/vi/'}>
+  <div class="container notfound">
+    <h1>404</h1>
+    <p class="lead" style="margin: 0 auto 1.5em">{t('404.text')}</p>
+    <a class="btn btn-primary" href={isVi ? '/vi/' : '/'}>{t('404.home')}</a>
+  </div>
+</BaseLayout>

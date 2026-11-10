@@ -1,0 +1,44 @@
+# Giải thưởng & học bổng. Mỗi mục cần "id" không trùng.
+# date: dạng "YYYY-MM"; web tự xếp mới nhất lên trên.
+# link: chứng nhận / bằng khen (tuỳ chọn) — tên giải sẽ thành link.
+
+- id: quantvn-scholarship-2026
+  title:
+    en: QuantVN Scholarship 2026
+    vi: Học bổng QuantVN 2026
+  issuer: QuantVN
+  date: "2026-06"
+  link: https://drive.google.com/file/d/1jOZVsz6O7OdP4-VivTYLe5mD4CBvbCzN/view
+  note:
+    en: Recognized for outstanding academic performance.
+    vi: Ghi nhận thành tích học tập xuất sắc.
+
+- id: vmo-2024
+  title:
+    en: Ninh Thuan provincial team – National High School Mathematics Olympiad (VMO)
+    vi: Thành viên đội tuyển tỉnh Ninh Thuận – Kỳ thi chọn học sinh giỏi Quốc gia THPT môn Toán (VMO)
+  issuer:
+    en: Ministry of Education and Training of Vietnam · school year 2023–2024
+    vi: Bộ Giáo dục và Đào tạo · năm học 2023–2024
+  date: "2024-01"
+  link: https://drive.google.com/file/d/1CBxD2CCmaNoVV_kpBfvG-O2DnffZmkQY/view
+
+- id: hsgs-olympiad-2023
+  title:
+    en: Participant in Mathematics – HSGS Olympiad
+    vi: Tham dự môn Toán – Olympic Chuyên Khoa học Tự nhiên (HSGS Olympiad)
+  issuer:
+    en: HUS High School for Gifted Students, VNU University of Science (Hanoi)
+    vi: Trường THPT Chuyên Khoa học Tự nhiên, Trường ĐH Khoa học Tự nhiên, ĐHQG Hà Nội
+  date: "2023-05"
+  link: https://drive.google.com/file/d/1r_i35LNVT_sNAKb1bPp02KIMvDhot_Us/view?usp=sharing
+
+- id: provincial-math-2023
+  title:
+    en: Third Prize in Mathematics – Ninh Thuan Provincial Excellent Student Competition
+    vi: Giải Ba môn Toán – Kỳ thi chọn học sinh giỏi cấp tỉnh Ninh Thuận
+  issuer:
+    en: Ninh Thuan Department of Education and Training · school year 2022–2023
+    vi: Sở Giáo dục và Đào tạo tỉnh Ninh Thuận · năm học 2022–2023
+  date: "2023-04"
+  link: https://drive.google.com/file/d/1kMvb6tfwMTjTO7BMSiaDwNDgyG630fCT/view?usp=sharing

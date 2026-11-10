@@ -1,0 +1,34 @@
+- id: uit-bsc
+  school:
+    en: University of Information Technology, VNU-HCM
+    vi: Trường Đại học Công nghệ Thông tin, ĐHQG-HCM
+  url: https://www.uit.edu.vn
+  degree:
+    en: B.Sc. in Computer Science 
+    vi: Cử nhân Khoa học Máy tính
+  start: "2025"
+  end:
+    en: 2028 (Expected)
+    vi: 2028 (dự kiến)
+  details:
+    en: |-
+      GPA: 8.67/10
+      Relevant coursework: Linear Algebra (9.6), Calculus (9.8), Data Structures & Algorithms (8.6), Discrete Structure (9.9), Probability & Statistics (8.8).
+    vi: |-
+      GPA: 8.67/10
+      Các môn học liên quan: Đại số tuyến tính (9.6), Giải tích (9.8), Cấu trúc dữ liệu và giải thuật (8.6), Cấu trúc rời rạc (9.9), Xác suất thống kê (8.8).
+
+- id: lqd-high-school
+  school:
+    en: Le Quy Don High School for the Gifted, Ninh Thuan
+    vi: Trường THPT Chuyên Lê Quý Đôn, Ninh Thuận
+  degree:
+    en: Mathematics Specialized Class
+    vi: Lớp chuyên Toán
+  start: "2022"
+  end: "2025"
+  details:
+    en: |-
+      Math awards: [National Math Olympiad](https://drive.google.com/file/d/1CBxD2CCmaNoVV_kpBfvG-O2DnffZmkQY/view) · [Provincial Math Competition (3rd Prize)](https://drive.google.com/file/d/1kMvb6tfwMTjTO7BMSiaDwNDgyG630fCT/view?usp=sharing) · [HUS Math Olympiad](https://drive.google.com/file/d/1r_i35LNVT_sNAKb1bPp02KIMvDhot_Us/view?usp=sharing).
+    vi: |-
+      Giải thưởng Toán: [Kỳ thi chọn học sinh giỏi Quốc gia môn Toán](https://drive.google.com/file/d/1CBxD2CCmaNoVV_kpBfvG-O2DnffZmkQY/view) · [Học sinh giỏi cấp tỉnh môn Toán (Giải Ba)](https://drive.google.com/file/d/1kMvb6tfwMTjTO7BMSiaDwNDgyG630fCT/view?usp=sharing) · [Olympic Toán HUS](https://drive.google.com/file/d/1r_i35LNVT_sNAKb1bPp02KIMvDhot_Us/view?usp=sharing)

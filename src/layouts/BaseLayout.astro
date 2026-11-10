@@ -1,0 +1,109 @@
+---
+import '../styles/global.css';
+import { getEntry } from 'astro:content';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Search from '../components/Search.astro';
+import { localize, otherLang, pick, stripLang, useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+  /** Link sang trang tương ứng ở ngôn ngữ kia. Mặc định: cùng đường dẫn. */
+  alternate?: string;
+  /** true nếu trang này chưa có bản dịch (không xuất hreflang) */
+  alternateMissing?: boolean;
+  image?: string;
+  type?: 'website' | 'article';
+}
+
+const { lang, title, description, alternate, alternateMissing = false, image, type = 'website' } = Astro.props;
+const t = useTranslations(lang);
+const profileEntry = await getEntry('profile', 'me');
+if (!profileEntry) throw new Error('Thiếu khóa "me" trong src/data/profile.yaml');
+const profile = profileEntry.data;
+
+const siteName = pick(profile.name, lang);
+const fullTitle = title ? `${title} · ${siteName}` : siteName;
+const desc = description || pick(profile.tagline, lang);
+const other = otherLang(lang);
+const altHref = alternate ?? localize(stripLang(Astro.url.pathname), other);
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const altAbsolute = new URL(altHref, Astro.site);
+const ogImage = image ? new URL(image, Astro.site).toString() : undefined;
+---
+<!doctype html>
+<html lang={lang} data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    {!alternateMissing && (
+      <>
+        <link rel="alternate" hreflang={lang} href={canonical} />
+        <link rel="alternate" hreflang={other} href={altAbsolute} />
+      </>
+    )}
+    <link rel="alternate" type="application/rss+xml" title={`${siteName} — RSS`} href={localize('/rss.xml', lang)} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'vi' ? 'vi_VN' : 'en_US'} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    />
+
+    <!-- Đặt theme trước khi vẽ trang để không bị nháy trắng -->
+    <script is:inline>
+      (function () {
+        var theme = 'light';
+        try {
+          var saved = localStorage.getItem('theme');
+          theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        } catch (e) {}
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t('skip')}</a>
+    <Header lang={lang} brand={siteName} altHref={altHref} altMissing={alternateMissing} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} profile={profile} />
+    <Search lang={lang} />
+
+    <script>
+      // Nút sao chép cho mọi khối có [data-copy-source]
+      document.addEventListener('click', async (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copy-source]');
+        if (!btn) return;
+        const box = btn.closest('.code-box, .code-wrap');
+        const text = box?.querySelector('pre')?.innerText ?? '';
+        try {
+          await navigator.clipboard.writeText(text);
+          const label = btn.textContent;
+          btn.textContent = btn.dataset.copied ?? '✓';
+          setTimeout(() => (btn.textContent = label), 1500);
+        } catch {
+          /* trình duyệt chặn clipboard */
+        }
+      });
+    </script>
+  </body>
+</html>

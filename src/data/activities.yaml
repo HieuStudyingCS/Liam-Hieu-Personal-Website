@@ -1,0 +1,39 @@
+# Activities & Leadership (hoạt động ngoại khoá). Mỗi mục cần "id" không trùng.
+# start / end: dạng "YYYY-MM" (ví dụ "2025-11"); end để "" = đang tiếp diễn (Present / Hiện tại).
+# Thứ tự trong file không quan trọng: web tự xếp mới nhất lên trên.
+# bullets hỗ trợ **đậm** và [link](url).
+
+- id: gdgoc-hcmus
+  role:
+    en: Operations Team Member
+    vi: Thành viên Ban Vận hành
+  org:
+    en: Google Developer Group on Campus – VNU-HCM University of Science
+    vi: Google Developer Group on Campus – Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM
+  start: "2025-11"
+  end: ""
+
+- id: se-academic-club
+  role:
+    en: Vice Head of Club, Academic Advisor & Trainer
+    vi: Phó ban, Cố vấn học thuật & Trainer
+  org:
+    en: Software Engineering Academic Club (UIT)
+    vi: Ban Học tập Công nghệ Phần mềm (UIT)
+  start: "2026-02"
+  end: ""
+  bullets:
+    - en: "Led 80% of the club's Probability & Statistics training sessions, turning complex theory into digestible lessons for fellow students."
+      vi: "Phụ trách 80% số buổi training môn Xác suất thống kê của ban, diễn giải lý thuyết phức tạp thành bài giảng dễ hiểu cho các bạn sinh viên."
+    - en: "Co-authored the [C++ Knowledge Handbook](https://handbook.bhtcnpm.com/docs/category/nh%E1%BA%ADp-m%C3%B4n-l%E1%BA%ADp-tr%C3%ACnh) for beginners, with highly visual code examples."
+      vi: "Đồng tác giả [Sổ tay kiến thức C++](https://handbook.bhtcnpm.com/docs/category/nh%E1%BA%ADp-m%C3%B4n-l%E1%BA%ADp-tr%C3%ACnh) cho người mới bắt đầu, với nhiều ví dụ code trực quan."
+
+- id: fessior-devcamp-2026
+  role:
+    en: Trainee
+    vi: Học viên
+  org:
+    en: "Fessior DevCamp 2026: Prometheus – Fessior Community"
+    vi: "Fessior DevCamp 2026: Prometheus – Cộng đồng Fessior"
+  start: "2026-02"
+  end: "2026-04"

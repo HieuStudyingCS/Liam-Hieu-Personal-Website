@@ -1,0 +1,130 @@
+---
+import Icon from './Icon.astro';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<dialog class="search-dialog" id="search-dialog" aria-label={t('search.button')} data-lang={lang} data-empty={t('search.empty')} data-hint={t('search.hint')}>
+  <div class="search-box">
+    <Icon name="search" />
+    <input type="search" id="search-input" placeholder={t('search.placeholder')} autocomplete="off" spellcheck="false" />
+    <kbd class="muted">Esc</kbd>
+  </div>
+  <ul class="search-results" id="search-results" role="listbox"></ul>
+</dialog>
+
+<script>
+  type Doc = { title: string; description: string; tags: string[]; lang: string; url: string; date: string; text: string };
+
+  const dialog = document.getElementById('search-dialog') as HTMLDialogElement | null;
+  const input = document.getElementById('search-input') as HTMLInputElement | null;
+  const list = document.getElementById('search-results') as HTMLUListElement | null;
+  let docs: Doc[] | null = null;
+  let active = -1;
+
+  const norm = (s: string) =>
+    s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+  const esc = (s: string) =>
+    s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string);
+
+  async function load(): Promise<Doc[]> {
+    if (docs) return docs;
+    try {
+      const res = await fetch('/search.json');
+      docs = (await res.json()) as Doc[];
+    } catch {
+      docs = [];
+    }
+    return docs;
+  }
+
+  function render(results: Doc[], q: string) {
+    if (!list || !dialog) return;
+    active = -1;
+    if (!q) {
+      list.innerHTML = `<li class="empty">${esc(dialog.dataset.hint ?? '')}</li>`;
+      return;
+    }
+    if (!results.length) {
+      list.innerHTML = `<li class="empty">${esc(dialog.dataset.empty ?? '')}</li>`;
+      return;
+    }
+    list.innerHTML = results
+      .map(
+        (d) => `<li><a href="${d.url}"><span class="r-title">${esc(d.title)} <span class="badge badge-muted">${d.lang.toUpperCase()}</span></span>` +
+          `<span class="r-desc">${esc(d.description || d.text.slice(0, 120))}</span></a></li>`,
+      )
+      .join('');
+  }
+
+  async function search() {
+    if (!input || !dialog) return;
+    const q = input.value.trim();
+    const terms = norm(q).split(/\s+/).filter(Boolean);
+    if (!terms.length) return render([], '');
+    const lang = dialog.dataset.lang;
+    const all = await load();
+    const scored = all
+      .map((d) => {
+        const title = norm(d.title);
+        const tags = norm(d.tags.join(' '));
+        const desc = norm(d.description);
+        const body = norm(d.text);
+        let score = 0;
+        for (const term of terms) {
+          const s = (title.includes(term) ? 6 : 0) + (tags.includes(term) ? 4 : 0) + (desc.includes(term) ? 2 : 0) + (body.includes(term) ? 1 : 0);
+          if (s === 0) return { d, score: 0 };
+          score += s;
+        }
+        if (d.lang === lang) score += 0.5;
+        return { d, score };
+      })
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10)
+      .map((x) => x.d);
+    render(scored, q);
+  }
+
+  function open() {
+    if (!dialog || !input) return;
+    if (!dialog.open) dialog.showModal();
+    input.select();
+    void load();
+    if (!input.value) render([], '');
+  }
+
+  document.querySelectorAll('[data-search-open]').forEach((el) => el.addEventListener('click', open));
+  input?.addEventListener('input', () => void search());
+
+  document.addEventListener('keydown', (e) => {
+    const target = e.target as HTMLElement;
+    const typing = target.closest('input, textarea, [contenteditable="true"]');
+    if ((e.key === 'k' && (e.ctrlKey || e.metaKey)) || (e.key === '/' && !typing)) {
+      e.preventDefault();
+      open();
+    }
+  });
+
+  // Đi lên/xuống kết quả bằng phím mũi tên
+  input?.addEventListener('keydown', (e) => {
+    const links = list ? Array.from(list.querySelectorAll('a')) : [];
+    if (!links.length) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      active = (active + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length;
+      links.forEach((a, i) => a.classList.toggle('is-active', i === active));
+      links[active]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter') {
+      const target = links[Math.max(active, 0)];
+      if (target) window.location.href = target.href;
+    }
+  });
+
+  // Bấm ra ngoài khung để đóng
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>

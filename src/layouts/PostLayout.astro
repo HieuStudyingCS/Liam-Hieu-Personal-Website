@@ -1,0 +1,207 @@
+---
+import 'katex/dist/katex.min.css';
+import type { MarkdownHeading } from 'astro';
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Toc from '../components/Toc.astro';
+import Giscus from '../components/Giscus.astro';
+import Views from '../components/Views.astro';
+import { formatDate, localize, otherLang, pick, useTranslations, type Lang } from '../i18n/ui';
+import {
+  findTranslation,
+  getPosts,
+  postUrl,
+  readingTime,
+  relatedPosts,
+  seriesNeighbors,
+  slugOf,
+  tagUrl,
+  type Post,
+} from '../utils/posts';
+
+interface Props {
+  post: Post;
+  headings: MarkdownHeading[];
+  lang: Lang;
+}
+const { post, headings, lang } = Astro.props;
+const t = useTranslations(lang);
+const d = post.data;
+
+const all = await getPosts();
+const sameLang = all.filter((p) => p.id.endsWith(`/${lang}`));
+const translation = findTranslation(post, all);
+const other = otherLang(lang);
+const alternate = translation ? postUrl(translation) : localize('/blog', other);
+const related = relatedPosts(post, sameLang);
+const series = seriesNeighbors(post, sameLang);
+
+const profile = (await getEntry('profile', 'me'))!.data;
+const author = pick(profile.name, 'en');
+const year = d.pubDate.getUTCFullYear();
+const url = new URL(postUrl(post), Astro.site).toString();
+const citeKey = `${author.split(' ').pop()?.toLowerCase() ?? 'author'}${year}${slugOf(post).replace(/^\d{4}-\d{2}-\d{2}-/, '').split('-')[0]}`;
+const bibtex = `@misc{${citeKey},
+  author       = {${author}},
+  title        = {${d.title}},
+  year         = {${year}},
+  howpublished = {\\url{${url}}},
+  note         = {Blog post}
+}`;
+---
+<BaseLayout
+  lang={lang}
+  title={d.title}
+  description={d.description}
+  alternate={alternate}
+  alternateMissing={!translation}
+  image={d.cover?.src}
+  type="article"
+>
+  <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+  <div class="container container-post">
+    <div class="post-grid">
+      <Toc headings={headings} label={t('blog.toc')} />
+
+      <article>
+        <header class="post-header">
+          <h1>{d.title}</h1>
+          {d.description && <p class="post-desc">{d.description}</p>}
+          <div class="post-meta">
+            <time datetime={d.pubDate.toISOString()}>{formatDate(d.pubDate, lang)}</time>
+            {d.updatedDate && <span>{t('blog.updated')} {formatDate(d.updatedDate, lang)}</span>}
+            <span>{readingTime(post)} {t('blog.minRead')}</span>
+            <Views slug={slugOf(post)} label={t('blog.views')} />
+            {d.draft && <span class="badge badge-warm">DRAFT</span>}
+            {translation && (
+              <a class="translation-note" href={postUrl(translation)} hreflang={other}>{t('blog.translationAvailable')} →</a>
+            )}
+          </div>
+          {d.tags.length > 0 && (
+            <ul class="tag-list">{d.tags.map((tag) => <li><a href={tagUrl(tag, lang)}>{tag}</a></li>)}</ul>
+          )}
+          {d.cover && (
+            <figure class="post-cover">
+              <Image src={d.cover} alt="" width={1200} loading="eager" />
+            </figure>
+          )}
+        </header>
+
+        <div class="prose" id="post-content">
+          <slot />
+        </div>
+
+        <footer class="post-footer">
+          {series.list.length > 1 && (
+            <section class="series-box">
+              <strong>{t('blog.series')}: {d.series}</strong>
+              <ol>
+                {series.list.map((p) => (
+                  <li aria-current={p.id === post.id ? 'page' : undefined}>
+                    {p.id === post.id ? p.data.title : <a href={postUrl(p)}>{p.data.title}</a>}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+          {(series.prev || series.next) && (
+            <nav class="prev-next" aria-label={t('blog.series')}>
+              {series.prev && <a class="prev" href={postUrl(series.prev)}><small>← {t('blog.prev')}</small>{series.prev.data.title}</a>}
+              {series.next && <a class="next" href={postUrl(series.next)}><small>{t('blog.next')} →</small>{series.next.data.title}</a>}
+            </nav>
+          )}
+
+          <section>
+            <h2>{t('blog.cite')}</h2>
+            <div class="code-box">
+              <pre><code>{bibtex}</code></pre>
+              <button type="button" class="copy-btn" data-copy-source data-copied={t('blog.copied')}>{t('blog.copy')}</button>
+            </div>
+          </section>
+
+          {related.length > 0 && (
+            <section>
+              <h2>{t('blog.related')}</h2>
+              <ul class="compact-posts">
+                {related.map((p) => (
+                  <li>
+                    <a href={postUrl(p)}>{p.data.title}</a>
+                    <div class="post-meta"><time datetime={p.data.pubDate.toISOString()}>{formatDate(p.data.pubDate, lang)}</time></div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <Giscus lang={lang} title={t('blog.comments')} />
+        </footer>
+      </article>
+
+      <aside aria-hidden="true"></aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Thanh tiến độ đọc
+  const bar = document.getElementById('reading-progress');
+  const content = document.getElementById('post-content');
+  const onScroll = () => {
+    if (!bar || !content) return;
+    const rect = content.getBoundingClientRect();
+    const total = rect.height - window.innerHeight * 0.6;
+    const progress = Math.min(1, Math.max(0, -rect.top / Math.max(total, 1)));
+    bar.style.width = `${progress * 100}%`;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Link neo "#" cạnh mỗi heading
+  content?.querySelectorAll<HTMLElement>('h2[id], h3[id]').forEach((h) => {
+    if (h.closest('.footnotes')) return;
+    const a = document.createElement('a');
+    a.href = `#${h.id}`;
+    a.className = 'anchor';
+    a.setAttribute('aria-label', 'Link');
+    a.textContent = '#';
+    h.prepend(a);
+  });
+
+  // Nút sao chép cho code block
+  content?.querySelectorAll<HTMLPreElement>('pre').forEach((pre) => {
+    if (pre.parentElement?.classList.contains('code-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'code-wrap';
+    pre.replaceWith(wrap);
+    wrap.appendChild(pre);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.dataset.copySource = '';
+    btn.dataset.copied = '✓';
+    wrap.appendChild(btn);
+  });
+
+  // Widget tương tác: <div data-widget="ten"></div> trong bài → chạy src/widgets/ten.js (xem README, mục 7)
+  const widgetModules = import.meta.glob('../widgets/*.{js,ts}');
+  content?.querySelectorAll<HTMLElement>('[data-widget]').forEach(async (el) => {
+    const name = el.dataset.widget ?? '';
+    const key = Object.keys(widgetModules).find((k) => k.replace(/^.*\/|\.(js|ts)$/g, '') === name);
+    el.classList.add('widget');
+    if (!key) {
+      el.classList.add('widget-error');
+      el.textContent = `Không tìm thấy widget "${name}" (src/widgets/${name}.js)`;
+      return;
+    }
+    try {
+      const mod = (await widgetModules[key]()) as { default: (root: HTMLElement) => void };
+      mod.default(el);
+    } catch (err) {
+      console.error(err);
+      el.classList.add('widget-error');
+      el.textContent = `Widget "${name}" bị lỗi, mở Console (F12) để xem chi tiết.`;
+    }
+  });
+</script>

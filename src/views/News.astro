@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsList from '../components/NewsList.astro';
+import { useTranslations, type Lang, type UIKey } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const news = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const years = [...new Set(news.map((n) => n.data.date.getUTCFullYear()))];
+const types = (['paper', 'award', 'education', 'talk', 'project', 'life'] as const).filter((ty) =>
+  news.some((n) => n.data.type === ty),
+);
+---
+<BaseLayout lang={lang} title={t('news.title')}>
+  <div class="container">
+    <header class="page-head">
+      <h1>{t('news.title')}</h1>
+      <p class="lead">{t('news.lead')}</p>
+    </header>
+
+    {types.length > 1 && (
+      <div class="chips" role="group" id="news-filter">
+        <button type="button" class="chip" aria-pressed="true" data-filter="all">{t('news.all')}</button>
+        {types.map((ty) => (
+          <button type="button" class="chip" aria-pressed="false" data-filter={ty}>{t(`news.type.${ty}` as UIKey)}</button>
+        ))}
+      </div>
+    )}
+
+    <div id="news-years">
+      {years.map((year) => (
+        <section data-year-block>
+          <h2 class="news-year">{year}</h2>
+          <NewsList items={news.filter((n) => n.data.date.getUTCFullYear() === year)} lang={lang} />
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const group = document.getElementById('news-filter');
+  const wrap = document.getElementById('news-years');
+  group?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
+    if (!btn || !wrap) return;
+    const value = btn.dataset.filter;
+    group.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    wrap.querySelectorAll<HTMLElement>('.news-item').forEach((el) => {
+      el.hidden = value !== 'all' && el.dataset.type !== value;
+    });
+    wrap.querySelectorAll<HTMLElement>('[data-year-block]').forEach((block) => {
+      block.hidden = !Array.from(block.querySelectorAll<HTMLElement>('.news-item')).some((el) => !el.hidden);
+    });
+  });
+</script>

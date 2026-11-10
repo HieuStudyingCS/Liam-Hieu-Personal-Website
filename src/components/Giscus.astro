@@ -1,0 +1,52 @@
+---
+import { GISCUS } from '../config';
+import type { Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; title: string }
+const { lang, title } = Astro.props;
+const ready = GISCUS.enabled && GISCUS.repo && GISCUS.repoId && GISCUS.categoryId;
+---
+{ready && (
+  <section class="comments">
+    <h2>{title}</h2>
+    <div
+      id="giscus-host"
+      data-repo={GISCUS.repo}
+      data-repo-id={GISCUS.repoId}
+      data-category={GISCUS.category}
+      data-category-id={GISCUS.categoryId}
+      data-lang={lang}
+    ></div>
+  </section>
+)}
+
+<script>
+  const host = document.getElementById('giscus-host');
+  if (host) {
+    const theme = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+    const s = document.createElement('script');
+    s.src = 'https://giscus.app/client.js';
+    s.async = true;
+    s.crossOrigin = 'anonymous';
+    const attrs: Record<string, string> = {
+      'data-repo': host.dataset.repo ?? '',
+      'data-repo-id': host.dataset.repoId ?? '',
+      'data-category': host.dataset.category ?? '',
+      'data-category-id': host.dataset.categoryId ?? '',
+      'data-mapping': 'pathname',
+      'data-reactions-enabled': '1',
+      'data-input-position': 'top',
+      'data-lang': host.dataset.lang ?? 'en',
+      'data-loading': 'lazy',
+      'data-theme': theme(),
+    };
+    Object.entries(attrs).forEach(([k, v]) => s.setAttribute(k, v));
+    host.appendChild(s);
+
+    // Đổi theme khung bình luận theo theme của trang
+    document.addEventListener('themechange', () => {
+      const frame = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+      frame?.contentWindow?.postMessage({ giscus: { setConfig: { theme: theme() } } }, 'https://giscus.app');
+    });
+  }
+</script>

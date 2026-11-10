@@ -1,0 +1,67 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PubItem from '../components/PubItem.astro';
+import { useTranslations, type Lang, type UIKey } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const profile = (await getEntry('profile', 'me'))!.data;
+const pubs = (await getCollection('publications')).sort((a, b) => b.data.year - a.data.year);
+const years = [...new Set(pubs.map((p) => p.data.year))];
+const statuses = (['published', 'accepted', 'preprint', 'under-review'] as const).filter((s) =>
+  pubs.some((p) => p.data.status === s),
+);
+---
+<BaseLayout lang={lang} title={t('pubs.title')}>
+  <div class="container">
+    <header class="page-head">
+      <h1>{t('pubs.title')}</h1>
+      <p class="lead">{t('pubs.lead')}</p>
+    </header>
+
+    {statuses.length > 1 && (
+      <div class="chips" role="group" data-filter-group="pubs">
+        <button type="button" class="chip" aria-pressed="true" data-filter="all">{t('pubs.all')}</button>
+        {statuses.map((s) => (
+          <button type="button" class="chip" aria-pressed="false" data-filter={s}>{t(`status.${s}` as UIKey)}</button>
+        ))}
+      </div>
+    )}
+
+    <div data-filter-target="pubs">
+      {years.map((year) => (
+        <section data-year-block>
+          <h2 class="year-head">{year}</h2>
+          <ul class="pub-list">
+            {pubs
+              .filter((p) => p.data.year === year)
+              .map((p) => <PubItem pub={p} lang={lang} authorNames={profile.authorNames} />)}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-filter-group]').forEach((group) => {
+    const target = document.querySelector<HTMLElement>(`[data-filter-target="${group.dataset.filterGroup}"]`);
+    group.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
+      if (!btn || !target) return;
+      const value = btn.dataset.filter;
+      group.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      target.querySelectorAll<HTMLElement>('[data-category]').forEach((el) => {
+        el.hidden = value !== 'all' && el.dataset.category !== value;
+      });
+      // Ẩn tiêu đề năm khi năm đó không còn mục nào
+      target.querySelectorAll<HTMLElement>('[data-year-block]').forEach((block) => {
+        const visible = Array.from(block.querySelectorAll<HTMLElement>('[data-category]')).some((el) => !el.hidden);
+        block.hidden = !visible;
+      });
+    });
+  });
+</script>

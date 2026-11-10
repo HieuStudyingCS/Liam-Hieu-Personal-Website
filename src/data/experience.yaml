@@ -1,0 +1,19 @@
+# Kinh nghiệm. Mỗi mục cần "id" không trùng; mục mới nhất đặt trên cùng.
+# end để trống = "Present / Hiện tại". bullets hỗ trợ **đậm** và [link](url).
+- id: elo-uit
+  role:
+    en: Undergraduate Researcher
+    vi: Sinh viên nghiên cứu
+  org: ELO@UIT – Evolutionary Learning & Optimization Lab
+  url: https://sites.google.com/view/hoangluong
+  start:
+    en: May 2026
+    vi: 05/2026
+  end: ""
+  bullets:
+    - en: "Advisor: [Dr. Luong Ngoc Hoang](https://scholar.google.com/citations?user=p3vHDZYAAAAJ&hl=vi)."
+      vi: "Người hướng dẫn: [TS. Lương Ngọc Hoàng](https://scholar.google.com/citations?user=p3vHDZYAAAAJ&hl=vi)."
+    - en: "Research on black-box optimization and evolution strategies."
+      vi: "Nghiên cứu về black-box optimization và evolution strategies."
+    - en: "Currently working on mixed-category black-box optimization problems (continuous and categorical variables) using ASNG (Adaptive Stochastic Natural Gradient), IGO (Information-Geometric Optimization) and CMA-ES (Covariance Matrix Adaptation Evolution Strategy)."
+      vi: "Hiện đang giải quyết các bài toán black-box optimization với biến hỗn hợp (mixed-category: biến liên tục và biến phân loại) bằng ASNG (Adaptive Stochastic Natural Gradient), IGO (Information-Geometric Optimization) và CMA-ES (Covariance Matrix Adaptation Evolution Strategy)."

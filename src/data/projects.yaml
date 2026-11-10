@@ -1,0 +1,78 @@
+# Dự án ở trang Portfolio. Mỗi mục cần "id" không trùng.
+# category: research | competition | self-study | personal | other  (dùng cho bộ lọc)
+# award:      huy hiệu nổi bật (giải thưởng, thứ hạng)          — tuỳ chọn
+# period:     thời gian thực hiện                               — tuỳ chọn
+# highlights: các gạch đầu dòng; hỗ trợ **đậm** và [link](url)  — tuỳ chọn
+# image:      ảnh trong public/, ví dụ /projects/ten-anh.png   — tuỳ chọn
+
+- id: rmit-hackathon-2026
+  title:
+    en: Multilingual Prompt-Attack Classification
+    vi: Phân loại tấn công prompt đa ngôn ngữ
+  category: competition
+  year: 2026
+  period:
+    en: Oct 2026 · RMIT Hackathon 2026
+    vi: 10/2026 · RMIT Hackathon 2026
+  award:
+    en: Top 28/155 teams
+    vi: Top 28/155 đội
+  description:
+    en: Classify prompts in Portuguese, French, Italian and English as BENIGN, JAILBREAK or PROMPT_INJECTION ([Kaggle competition](https://www.kaggle.com/competitions/rmit-hackathon-2026)). The challenge is that most AI-safety data is English-centric, while the target data is mostly non-English.
+    vi: Phân loại prompt tiếng Bồ Đào Nha, Pháp, Ý và Anh thành BENIGN, JAILBREAK hoặc PROMPT_INJECTION ([cuộc thi trên Kaggle](https://www.kaggle.com/competitions/rmit-hackathon-2026)). Khó ở chỗ phần lớn dữ liệu an toàn AI là tiếng Anh, còn dữ liệu cần phân loại chủ yếu không phải tiếng Anh.
+  highlights:
+    - en: "**Solution:** fine-tuned XLM-RoBERTa Base with 5-fold cross-validation stratified by label and language, plus a class-weighted cross-entropy loss for the rare PROMPT_INJECTION class (~7% of the data)."
+      vi: "**Giải pháp:** fine-tune XLM-RoBERTa Base với 5-fold cross-validation phân tầng theo cả nhãn lẫn ngôn ngữ, kèm cross-entropy có trọng số cho lớp hiếm PROMPT_INJECTION (~7% dữ liệu)."
+    - en: "Kept the first 1,000 + last 600 characters of long prompts (512-token limit) and calibrated per-class scores on held-out folds, accepting a change only if macro-F1 improved by ≥ 0.003."
+      vi: "Giữ 1.000 ký tự đầu + 600 ký tự cuối của prompt dài (giới hạn 512 token) và hiệu chỉnh điểm từng lớp trên các fold giữ lại, chỉ chấp nhận khi macro-F1 tăng ≥ 0.003."
+    - en: "**Result:** macro-F1 of **0.97677** on the private test set (**0.97439** public), vs. **~0.26** for an all-BENIGN baseline - ranked **28th of 155 teams (top 18%)**."
+      vi: "**Kết quả:** macro-F1 **0.97677** trên tập private (public **0.97439**), so với **~0.26** của baseline đoán toàn BENIGN - **hạng 28/155 đội (top 18%)**."
+  tags: [Python, PyTorch, Hugging Face Transformers, XLM-RoBERTa, scikit-learn, pandas, NumPy, Google Colab]
+  links:
+    code: https://github.com/HieuStudyingCS/RMIT-hackathon
+
+- id: learning-ai-journey
+  title:
+    en: Machine Learning Foundations & Optimization Benchmarks
+    vi: Nền tảng Học Máy & benchmark các thuật toán tối ưu
+  category: self-study
+  year: 2026
+  period:
+    en: Since Mar 2026
+    vi: Từ 03/2026
+  description:
+    en: My public study log for AI and optimization - theory notes (PAC learning, Hoeffding's inequality, linear models for regression) paired with from-scratch Python implementations and benchmarks of gradient-based optimizers.
+    vi: Nhật ký học AI và tối ưu hoá công khai của tôi - ghi chú lý thuyết (PAC learning, bất đẳng thức Hoeffding, mô hình tuyến tính cho hồi quy) đi kèm cài đặt từ đầu bằng Python và benchmark các thuật toán tối ưu dựa trên gradient.
+  highlights:
+    - en: "Implemented **Gradient Descent**, **Momentum**, **Nesterov Accelerated Gradient** and **Stochastic** / **Mini-batch GD** from scratch, with notes deriving each update rule and loss-landscape visualizations."
+      vi: "Cài đặt từ đầu **Gradient Descent**, **Momentum**, **Nesterov Accelerated Gradient** và **Stochastic** / **Mini-batch GD**, kèm ghi chú chứng minh công thức cập nhật và trực quan hoá bề mặt hàm loss."
+    - en: "**Benchmark:** on the same regression task, Nesterov converged in **59 steps** and Momentum in **70**, vs. **258** for plain GD - up to **77% fewer iterations**."
+      vi: "**Benchmark:** trên cùng một bài toán hồi quy, Nesterov hội tụ sau **59 bước**, Momentum sau **70 bước**, so với **258 bước** của GD thường - giảm tới **77% số vòng lặp**."
+    - en: "Momentum GD ran **≈7× faster** than plain GD in wall-clock time (0.058 s vs. 0.412 s) on a linear-regression benchmark."
+      vi: "Momentum GD chạy **nhanh hơn ≈7 lần** so với GD thường (0.058 s so với 0.412 s) trên một benchmark hồi quy tuyến tính."
+  tags: [Python, NumPy, Matplotlib, Jupyter Notebook, Google Colab]
+  links:
+    code: https://github.com/HieuStudyingCS/Learning-AI-Journey
+
+- id: california-housing
+  title:
+    en: California House Price Prediction
+    vi: Dự đoán giá nhà California
+  category: self-study
+  year: 2026
+  period:
+    en: Feb 2026
+    vi: 02/2026
+  description:
+    en: Linear-regression model predicting median house prices on the Kaggle California Housing dataset (**20,640** records), trained with my own gradient-descent implementation and compared against scikit-learn.
+    vi: Mô hình hồi quy tuyến tính dự đoán giá nhà trung vị trên bộ dữ liệu California Housing của Kaggle (**20.640** bản ghi), huấn luyện bằng thuật toán gradient descent tự cài đặt và so sánh với scikit-learn.
+  highlights:
+    - en: "Implemented batch Gradient Descent from scratch and benchmarked it against scikit-learn's regression models."
+      vi: "Tự cài đặt batch Gradient Descent và so sánh hiệu năng với các mô hình hồi quy của scikit-learn."
+    - en: "Stabilized **scikit-learn's SGDRegressor** with **Z-score feature scaling** and an **adaptive learning rate** to prevent gradient explosion."
+      vi: "Ổn định quá trình huấn luyện SGDRegressor của scikit-learn bằng **chuẩn hoá Z-score** và **learning rate thích nghi**, tránh bùng nổ gradient."
+    - en: "**Result:** **R² = 0.626** on the validation set."
+      vi: "**Kết quả:** **R² = 0.626** trên tập validation."
+  tags: [Python, NumPy, pandas, scikit-learn, Matplotlib]
+  links:
+    code: https://github.com/HieuStudyingCS/California-housing-price-prediction

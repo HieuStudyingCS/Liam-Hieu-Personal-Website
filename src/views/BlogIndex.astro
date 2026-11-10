@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostRow from '../components/PostRow.astro';
+import { localize, otherLang, useTranslations, type Lang } from '../i18n/ui';
+import { allTags, getPosts, langOf, tagSlug, tagUrl } from '../utils/posts';
+
+interface Props {
+  lang: Lang;
+  /** Nếu có: chỉ hiện bài có tag này */
+  tag?: { slug: string; name: string };
+}
+const { lang, tag } = Astro.props;
+const t = useTranslations(lang);
+
+const all = await getPosts();
+const matches = tag ? all.filter((p) => p.data.tags.some((x) => tagSlug(x) === tag.slug)) : all;
+const mine = matches.filter((p) => langOf(p) === lang);
+const others = matches.filter((p) => langOf(p) !== lang);
+const tags = allTags(all.filter((p) => langOf(p) === lang));
+const title = tag ? `${t('blog.taggedWith')} #${tag.name}` : t('blog.title');
+---
+<BaseLayout lang={lang} title={title} description={t('blog.lead')}>
+  <div class="container">
+    <header class="page-head">
+      <h1>{tag ? <>#{tag.name}</> : t('blog.title')}</h1>
+      <p class="lead">{tag ? <a href={localize('/blog', lang)}>← {t('blog.allPosts')}</a> : t('blog.lead')}</p>
+    </header>
+
+    <div class="blog-toolbar">
+      {tags.length > 0 && (
+        <ul class="chips" aria-label="Tags">
+          <li><a class:list={['chip', { 'is-active': !tag }]} href={localize('/blog', lang)}>{t('blog.allTags')}</a></li>
+          {tags.map((x) => (
+            <li>
+              <a class:list={['chip', { 'is-active': tag?.slug === x.slug }]} href={tagUrl(x.tag, lang)}>
+                {x.tag} <span class="count">{x.count}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+      {others.length > 0 && (
+        <label class="toggle">
+          <input type="checkbox" id="other-lang-toggle" />
+          {t('blog.otherLang')} ({others.length})
+        </label>
+      )}
+    </div>
+
+    {mine.length === 0 && others.length === 0 ? (
+      <p class="muted">{t('blog.empty')}</p>
+    ) : (
+      <ul class="post-list" id="post-list" data-other={otherLang(lang)}>
+        {[...mine, ...others]
+          .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+          .map((p) => <PostRow post={p} lang={lang} otherLang={langOf(p) !== lang} />)}
+      </ul>
+    )}
+    {mine.length === 0 && others.length > 0 && <p class="muted">{t('blog.empty')}</p>}
+  </div>
+</BaseLayout>
+
+<script>
+  const toggle = document.getElementById('other-lang-toggle') as HTMLInputElement | null;
+  const list = document.getElementById('post-list');
+  const key = 'blog.showOtherLang';
+  try {
+    if (toggle && localStorage.getItem(key) === '1') toggle.checked = true;
+  } catch {
+    /* bỏ qua */
+  }
+  const apply = () => list?.classList.toggle('show-other-lang', Boolean(toggle?.checked));
+  apply();
+  toggle?.addEventListener('change', () => {
+    apply();
+    try {
+      localStorage.setItem(key, toggle.checked ? '1' : '0');
+    } catch {
+      /* bỏ qua */
+    }
+  });
+</script>

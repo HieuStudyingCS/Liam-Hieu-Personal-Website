@@ -1,0 +1,217 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PubItem from '../components/PubItem.astro';
+import { formatYearMonth, localize, pick, useTranslations, type I18nText, type Lang, type UIKey } from '../i18n/ui';
+import { inlineMd, lines, paragraphs } from '../utils/text';
+import { getPosts, tagSlug, tagUrl } from '../utils/posts';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const profile = (await getEntry('profile', 'me'))!.data;
+const education = await getCollection('education');
+const experience = await getCollection('experience');
+// Mới nhất ở trên: sắp theo tháng bắt đầu, cùng tháng thì việc còn tiếp diễn (end trống) đứng trên
+const activities = (await getCollection('activities')).sort(
+  (a, b) => b.data.start.localeCompare(a.data.start) || (b.data.end || '9999').localeCompare(a.data.end || '9999'),
+);
+const awards = (await getCollection('awards')).sort((a, b) => b.data.date.localeCompare(a.data.date));
+const ym = (v?: string) => (v ? formatYearMonth(v, lang) : t('present'));
+const projects = (await getCollection('projects')).sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+const pubs = (await getCollection('publications')).sort((a, b) => b.data.year - a.data.year);
+// Chỉ gắn link cho hướng nghiên cứu đã có bài viết cùng tag
+const usedTags = new Set((await getPosts(lang)).flatMap((p) => p.data.tags.map(tagSlug)));
+
+const period = (start: I18nText, end?: I18nText) => `${pick(start, lang)} – ${pick(end, lang).trim() || t('present')}`;
+const categories = ['research', 'competition', 'self-study', 'personal', 'other'].filter((c) =>
+  projects.some((p) => p.data.category === c),
+);
+---
+<BaseLayout lang={lang} title={t('portfolio.title')}>
+  <div class="container">
+    <header class="page-head">
+      <h1>{pick(profile.name, lang)}</h1>
+      <p class="lead">{pick(profile.role, lang)} @ {pick(profile.affiliation, lang)}</p>
+    </header>
+
+    <section class="section" id="about">
+      <div class="section-head"><h2>{t('portfolio.about')}</h2></div>
+      <div class="about" set:html={paragraphs(pick(profile.bio, lang))} />
+    </section>
+
+    {profile.interests.length > 0 && (
+      <section class="section" id="interests">
+        <div class="section-head"><h2>{t('portfolio.interests')}</h2></div>
+        <ul class="chips">
+          {profile.interests.map((i) => (
+            <li>
+              {i.tag && usedTags.has(tagSlug(i.tag)) ? <a class="chip" href={tagUrl(i.tag, lang)}>{pick(i.name, lang)}</a> : <span class="chip">{pick(i.name, lang)}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {education.length > 0 && (
+      <section class="section" id="education">
+        <div class="section-head"><h2>{t('portfolio.education')}</h2></div>
+        <ul class="timeline">
+          {education.map((e) => (
+            <li>
+              <span class="when">{period(e.data.start, e.data.end)}</span>
+              <div>
+                <h3>{e.data.url ? <a href={e.data.url} target="_blank" rel="noopener">{pick(e.data.school, lang)}</a> : pick(e.data.school, lang)}</h3>
+                <p>{pick(e.data.degree, lang)}</p>
+                {e.data.details && <p set:html={lines(pick(e.data.details, lang))} />}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {awards.length > 0 && (
+      <section class="section" id="awards">
+        <div class="section-head"><h2>{t('portfolio.awards')}</h2></div>
+        <ul class="timeline">
+          {awards.map((a) => (
+            <li>
+              <span class="when">{ym(a.data.date)}</span>
+              <div>
+                <h3>{a.data.link ? <a href={a.data.link} target="_blank" rel="noopener">{pick(a.data.title, lang)}</a> : pick(a.data.title, lang)}</h3>
+                {a.data.issuer && <p>{pick(a.data.issuer, lang)}</p>}
+                {a.data.note && <p set:html={lines(pick(a.data.note, lang))} />}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {pubs.length > 0 && (
+      <section class="section" id="publications">
+        <div class="section-head">
+          <h2>{t('portfolio.pubs')}</h2>
+          <a href={localize('/publications', lang)}>{t('home.allPubs')} →</a>
+        </div>
+        <ul class="pub-list">
+          {pubs.slice(0, 4).map((p) => <PubItem pub={p} lang={lang} authorNames={profile.authorNames} showThumb={false} />)}
+        </ul>
+      </section>
+    )}
+
+    {projects.length > 0 && (
+      <section class="section" id="projects">
+        <div class="section-head"><h2>{t('portfolio.projects')}</h2></div>
+        <div class="chips" role="group" data-filter-group="projects">
+          <button type="button" class="chip" aria-pressed="true" data-filter="all">{t('proj.all')}</button>
+          {categories.map((c) => (
+            <button type="button" class="chip" aria-pressed="false" data-filter={c}>{t(`proj.${c}` as UIKey)}</button>
+          ))}
+        </div>
+        <div class="project-grid" data-filter-target="projects">
+          {projects.map((p) => (
+            <article class="project" data-category={p.data.category}>
+              {p.data.image && <img src={p.data.image} alt="" loading="lazy" />}
+              <div class="project-body">
+                <h3>{pick(p.data.title, lang)}</h3>
+                {(p.data.award || p.data.period) && (
+                  <div class="project-meta">
+                    {p.data.award && <span class="badge badge-warm">{pick(p.data.award, lang)}</span>}
+                    {p.data.period && <span class="muted">{pick(p.data.period, lang)}</span>}
+                  </div>
+                )}
+                <p set:html={lines(pick(p.data.description, lang))} />
+                {p.data.highlights.length > 0 && (
+                  <ul class="project-highlights">
+                    {p.data.highlights.map((h) => <li set:html={inlineMd(pick(h, lang))} />)}
+                  </ul>
+                )}
+                {p.data.tags.length > 0 && (
+                  <ul class="tag-list">{p.data.tags.map((tag) => <li><span>{tag}</span></li>)}</ul>
+                )}
+                <div class="project-links">
+                  {p.data.links.code && <a href={p.data.links.code} target="_blank" rel="noopener">Code</a>}
+                  {p.data.links.paper && <a href={p.data.links.paper} target="_blank" rel="noopener">Paper</a>}
+                  {p.data.links.demo && <a href={p.data.links.demo} target="_blank" rel="noopener">Demo</a>}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {profile.techStack.length > 0 && (
+      <section class="section" id="stack">
+        <div class="section-head"><h2>{t('portfolio.stack')}</h2></div>
+        <div class="stack">
+          {profile.techStack.map((g) => (
+            <div class="stack-group">
+              <h3>{pick(g.group, lang)}</h3>
+              <ul class="chips">{g.items.map((item) => <li><span class="chip">{pick(item, lang)}</span></li>)}</ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {experience.length > 0 && (
+      <section class="section" id="experience">
+        <div class="section-head"><h2>{t('portfolio.experience')}</h2></div>
+        <ul class="timeline">
+          {experience.map((x) => (
+            <li>
+              <span class="when">{period(x.data.start, x.data.end)}</span>
+              <div>
+                <h3>
+                  {pick(x.data.role, lang)} ·{' '}
+                  {x.data.url ? <a href={x.data.url} target="_blank" rel="noopener">{pick(x.data.org, lang)}</a> : pick(x.data.org, lang)}
+                </h3>
+                {x.data.bullets.length > 0 && <ul>{x.data.bullets.map((b) => <li set:html={inlineMd(pick(b, lang))} />)}</ul>}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {activities.length > 0 && (
+      <section class="section" id="activities">
+        <div class="section-head"><h2>{t('portfolio.activities')}</h2></div>
+        <ul class="timeline">
+          {activities.map((x) => (
+            <li>
+              <span class="when">{ym(x.data.start)} – {ym(x.data.end)}</span>
+              <div>
+                <h3>
+                  {pick(x.data.role, lang)} ·{' '}
+                  {x.data.url ? <a href={x.data.url} target="_blank" rel="noopener">{pick(x.data.org, lang)}</a> : pick(x.data.org, lang)}
+                </h3>
+                {x.data.bullets.length > 0 && <ul>{x.data.bullets.map((b) => <li set:html={inlineMd(pick(b, lang))} />)}</ul>}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  // Bộ lọc dạng chip dùng chung: [data-filter-group=X] điều khiển [data-filter-target=X]
+  document.querySelectorAll<HTMLElement>('[data-filter-group]').forEach((group) => {
+    const target = document.querySelector<HTMLElement>(`[data-filter-target="${group.dataset.filterGroup}"]`);
+    group.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
+      if (!btn || !target) return;
+      const value = btn.dataset.filter;
+      group.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      target.querySelectorAll<HTMLElement>('[data-category]').forEach((el) => {
+        el.hidden = value !== 'all' && el.dataset.category !== value;
+      });
+    });
+  });
+</script>

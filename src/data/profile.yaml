@@ -1,0 +1,83 @@
+me:
+  name:
+    en: Trong-Hieu Le
+    vi: Lê Trọng Hiếu
+  shortName: Hieu
+  authorNames: ["Le Trong Hieu", "Hieu Le-Trong", "Trong-Hieu Le", "Hieu Le"]
+  role:
+    en: Undergraduate Student
+    vi: Sinh viên
+  affiliation:
+    en: University of Information Technology, VNU-HCM
+    vi: Trường Đại học Công nghệ Thông tin, ĐHQG-HCM
+  affiliationUrl: https://www.uit.edu.vn
+  tagline:
+    en: Notes and research on black-box optimization.
+    vi: Ghi chép và nghiên cứu về black-box optimization.
+  statement:
+    en: >-
+      My research interests lie in [[Black-box Optimization|Optimizing a function you can only query, with no gradient or closed-form]],
+      especially [[Evolution Strategies|Population-based search such as CMA-ES that adapts a sampling distribution]] and [[Bayesian Optimization|Sample-efficient optimization using a probabilistic surrogate model and an acquisition function]].
+      I want to build optimizers that are sample-efficient, reliable and easy to use on real problems. Feel free to reach out to me at the following email address.
+    vi: >-
+      Mình quan tâm đến [[Black-box Optimization|Tối ưu một hàm chỉ có thể truy vấn giá trị, không có gradient hay công thức cố định]],
+      đặc biệt là [[Evolution Strategies|Tìm kiếm dựa trên quần thể như CMA-ES, tự điều chỉnh phân phối lấy mẫu]] và [[Bayesian Optimization|Tối ưu tiết kiệm số lần đánh giá nhờ mô hình xác suất thay thế và acquisition function]].
+      Mục tiêu là xây dựng các bộ tối ưu tiết kiệm, ổn định và dễ dùng cho bài toán thực tế. Mình rất thoải mái với việc trả lời các câu hỏi, nên nếu có bất kỳ thắc mắc nào thì cứ liên hệ với mình thông qua thông tin liên hệ bên dưới nhé.
+  bio:
+    en: |-
+      I am a Computer Science undergraduate at the University of Information Technology, VNU-HCM.
+
+      I love mathematics and programming. When I started learning Machine Learning and building intelligent systems, I realized that what fascinates me most is optimization - the engine behind every AI model: from training and fine-tuning models so that they converge quickly and stably, to finding optimal solutions to problems across classical and modern Machine Learning, from linear regression to deep neural networks. That is why I chose optimization as my main research direction.
+    vi: |-
+      Mình là sinh viên ngành Khoa học Máy tính tại Trường Đại học Công nghệ Thông tin, ĐHQG-HCM.
+
+      Mình là người yêu thích toán học và lập trình. Lúc bắt đầu học Machine Learning và xây dựng các hệ thống thông minh, mình nhận ra bản thân mình yêu thích tối ưu hoá (Optimization) - công việc bắt buộc khi huấn luyện mô hình AI: từ việc huấn luyện và tinh chỉnh mô hình để hội tụ nhanh và ổn định, đến việc tìm nghiệm tối ưu cho các bài toán trong Machine Learning cổ điển lẫn hiện đại, từ hồi quy tuyến tính đến các mạng học sâu. Vì vậy, tôi đã lựa chọn tối ưu hoá làm hướng nghiên cứu chính của mình.
+  avatar: /avatar.jpg        # ảnh trong thư mục public/
+  email: letronghieu09012007@gmail.com
+  github: https://github.com/HieuStudyingCS
+  scholar: ""               
+  orcid: ""
+  linkedin: https://www.linkedin.com/in/1lth/
+  cv: https://drive.google.com/file/d/1SYSU6W-BdJ9YaqL18P-3sp9tbDbVVii7/view?usp=sharing
+  interests:
+    - name: Black-box Optimization
+      tag: black-box-optimization
+    - name: Bayesian Optimization
+      tag: bayesian-optimization
+    - name: Evolution Strategies
+      tag: evolution-strategies
+    - name:
+        en: Multi-objective Optimization
+        vi: Tối ưu đa mục tiêu
+      tag: multi-objective
+  techStack:                 # theo phần Skills trong CV
+    - group:
+        en: Programming Languages
+        vi: Ngôn ngữ lập trình
+      items:
+        - C/C++
+        - en: Python (primary)
+          vi: Python (chính)
+    - group:
+        en: AI/ML & Data Science
+        vi: AI/ML & Khoa học dữ liệu
+      items: [PyTorch, TensorFlow, Keras, Scikit-learn, Hugging Face, Pandas, NumPy, Matplotlib, Seaborn]
+    - group:
+        en: Software Engineering & Tools
+        vi: Kỹ thuật phần mềm & Công cụ
+      items:
+        - en: Object-Oriented Programming (OOP)
+          vi: Lập trình hướng đối tượng (OOP)
+        - Git/GitHub
+        - Docker
+        - Visual Studio Code
+        - Jupyter Notebook
+        - Google Colab
+    - group:
+        en: Languages
+        vi: Ngôn ngữ
+      items:
+        - en: Vietnamese (native)
+          vi: Tiếng Việt (bản ngữ)
+        - en: English (proficient, IELTS 7.0)
+          vi: Tiếng Anh (thành thạo, IELTS 7.0)
