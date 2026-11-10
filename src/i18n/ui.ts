@@ -27,7 +27,7 @@ const en = {
   'home.allPubs': 'All publications',
   'card.portfolio': 'Background, education, projects and the tools I use.',
   'card.publications': 'Papers, preprints and their code.',
-  'card.blog': 'My blogs.',
+  'card.blog': 'Study notes, thoughts and personal reflections.',
   'btn.email': 'Email',
   'btn.cv': 'CV',
 
@@ -59,7 +59,7 @@ const en = {
   'status.under-review': 'Under review',
 
   'blog.title': 'Blog',
-  'blog.lead': 'Notes on black-box optimization, Bayesian optimization and evolution strategies.',
+  'blog.lead': 'Notes on optimization, machine learning and whatever else I am learning, along with personal thoughts and reflections.',
   'blog.minRead': 'min read',
   'blog.views': 'views',
   'blog.toc': 'Contents',
@@ -124,7 +124,7 @@ const vi: Dict = {
   'home.allPubs': 'Tất cả publications',
   'card.portfolio': 'Học vấn, dự án và công cụ mình sử dụng.',
   'card.publications': 'Bài báo, preprint và mã nguồn.',
-  'card.blog': 'Các bài viết cá nhân.',
+  'card.blog': 'Ghi chép, suy nghĩ và cảm nhận cá nhân.',
   'btn.email': 'Email',
   'btn.cv': 'CV',
 
@@ -156,7 +156,7 @@ const vi: Dict = {
   'status.under-review': 'Đang phản biện',
 
   'blog.title': 'Blog',
-  'blog.lead': 'Ghi chép về black-box optimization, Bayesian optimization và evolution strategies.',
+  'blog.lead': 'Ghi chép về tối ưu hoá, machine learning và những điều mình đang học, cùng các suy nghĩ, cảm nhận cá nhân.',
   'blog.minRead': 'phút đọc',
   'blog.views': 'lượt xem',
   'blog.toc': 'Mục lục',

@@ -12,8 +12,8 @@ me:
     vi: Trường Đại học Công nghệ Thông tin, ĐHQG-HCM
   affiliationUrl: https://www.uit.edu.vn
   tagline:
-    en: Notes and research on black-box optimization.
-    vi: Ghi chép và nghiên cứu về black-box optimization.
+    en: Research on optimization, and a blog of study notes, thoughts and reflections.
+    vi: Nghiên cứu về tối ưu hoá, cùng một blog ghi lại kiến thức, suy nghĩ và cảm nhận cá nhân.
   statement:
     en: >-
       My research interests lie in [[Black-box Optimization|Optimizing a function you can only query, with no gradient or closed-form]],
