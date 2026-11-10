@@ -41,3 +41,6 @@ _to_delete/
 
 # Ảnh gốc ở thư mục gốc (website dùng bản trong public/)
 /assets/
+
+# Hướng dẫn chỉnh sửa riêng, giữ trên máy
+/README.md
