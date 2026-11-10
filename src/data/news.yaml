@@ -13,6 +13,12 @@
 #   text:
 #     en: "A paper was accepted at an example workshop."
 #     vi: "Một bài báo được nhận ở một workshop."
+- id: 2026-11-abc-challenge-paper
+  date: 2026-11-10
+  type: paper
+  text:
+    en: Submitted my first paper, with my team, to the **9th ABC Challenge** (ABC 2027) — [event-level fall localization in multi-radar UWB streams](/publications).
+    vi: Cùng team nộp paper đầu tiên cho **9th ABC Challenge** (ABC 2027) — [định vị sự kiện té ngã trong luồng dữ liệu radar UWB](/vi/publications).
 - id: 2026-06-quantvn-scholarship
   date: 2026-06-01
   type: award

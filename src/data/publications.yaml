@@ -1,4 +1,4 @@
-# Publications — hiện chưa có. Khi có bài, xoá dòng "[]" ở cuối file và thêm mục theo mẫu dưới đây (bỏ dấu #).
+# Publications — thêm bài mới theo mẫu dưới đây (bỏ dấu #). Thêm * sau tên để đánh dấu đóng góp ngang nhau.
 # status: published | accepted | preprint | under-review
 # selected: true  -> hiện ở trang chủ
 # Tên trùng với "authorNames" trong profile.yaml sẽ được in đậm.
@@ -16,4 +16,27 @@
 #     code: https://github.com/...
 #   bibtex: |-
 #     @misc{letrong2027abc, ...}
-[]
+
+- id: truong2027fall
+  title: "Event-Level Fall Localization in Multi-Radar UWB Streams with Boundary-Aware Decoding and Recurrent–Convolutional Fusion"
+  authors: ["Vu-Nghi Truong*", "Anh-Khoa Le Nguyen*", "Minh-Khoi Le Nguyen*", "Trong-Hieu Le*"]
+  venue: "9th ABC Challenge (UWB Fall Detection Track), International Conference on Activity and Behavior Computing (ABC 2027)"
+  venueShort: "ABC Challenge 2027"
+  year: 2027
+  status: under-review
+  selected: true
+  thumbnail: /papers/truong2027fall.png
+  note:
+    en: "* Equal contribution. Detecting and temporally localizing falls in continuous streams from three UWB radars: a ResNet–LSTM and a CNN–TCN branch are fused and decoded with boundary-aware start/end outputs, reaching an event F1-mean of 0.906 on public validation with 0.49 false alarms per hour."
+    vi: "* Đóng góp ngang nhau. Phát hiện và định vị theo thời gian các cú té ngã trong luồng dữ liệu liên tục từ ba radar UWB: kết hợp nhánh ResNet–LSTM và CNN–TCN, giải mã sự kiện bằng các đầu ra điểm bắt đầu/kết thúc, đạt F1-mean 0.906 trên tập public validation với 0.49 cảnh báo sai mỗi giờ."
+  links:
+    pdf: /papers/truong2027fall.pdf
+    code: https://github.com/khoile2550109-cyber/ABC-Challenge-2027
+  bibtex: |-
+    @misc{truong2027fall,
+      title        = {Event-Level Fall Localization in Multi-Radar {UWB} Streams with Boundary-Aware Decoding and Recurrent--Convolutional Fusion},
+      author       = {Truong, Vu-Nghi and Le Nguyen, Anh-Khoa and Le Nguyen, Minh-Khoi and Le, Trong-Hieu},
+      howpublished = {Submitted to the 9th ABC Challenge, International Conference on Activity and Behavior Computing (ABC 2027)},
+      year         = {2027},
+      note         = {Equal contribution}
+    }
