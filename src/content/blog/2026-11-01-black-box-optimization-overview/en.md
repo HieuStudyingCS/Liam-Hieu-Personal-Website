@@ -5,7 +5,7 @@ pubDate: 2026-11-01
 tags: [black-box optimization, bayesian optimization, evolution strategies]
 series: "Black-box Optimization"
 cover: ./cover.svg
-draft: true
+draft: false
 ---
 
 > This is a sample post that ships with the site. It shows every feature the blog supports — math, code, tables, footnotes, citations to other posts — so you can copy its structure, then edit or delete it.

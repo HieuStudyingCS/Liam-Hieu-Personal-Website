@@ -5,7 +5,7 @@ pubDate: 2026-11-07
 tags: [convex optimization, first-order methods, coordinate descent, lasso]
 series: "First-order Methods"
 cover: ./assets/Coordinate Search and Descent.png
-draft: false
+draft: true
 ---
 
 ## Introduction
