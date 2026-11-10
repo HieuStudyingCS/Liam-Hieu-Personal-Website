@@ -23,9 +23,18 @@ const mono = (type, fg, bg, muted, strong) => ({
   ],
 });
 
+// Địa chỉ website (dùng cho sitemap, RSS, link chia sẻ, thẻ canonical).
+// Khi build trên Vercel, VERCEL_PROJECT_PRODUCTION_URL là tên miền chính của dự án:
+// tên miền riêng nếu đã gắn, nếu chưa thì <tên-dự-án>.vercel.app. Chạy trên máy thì dùng localhost.
+// Muốn cố định một địa chỉ khác, đặt biến môi trường SITE_URL (ví dụ https://www.ten-mien.com).
+const site =
+  process.env.SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:4321');
+
 export default defineConfig({
-  // Đổi thành tên miền thật khi deploy (ví dụ 'https://lehieu.me')
-  site: 'https://example.com',
+  site,
   i18n: {
     locales: ['en', 'vi'],
     defaultLocale: 'en',

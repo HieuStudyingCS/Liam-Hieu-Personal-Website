@@ -5,7 +5,7 @@ pubDate: 2026-11-07
 tags: [convex optimization, first-order methods, coordinate descent, lasso]
 series: "First-order Methods"
 cover: ./assets/Coordinate Search and Descent.png
-draft: true
+draft: false
 ---
 
 ## Introduction
@@ -485,7 +485,7 @@ Về mặt đại số có thể tưởng tượng như sau, giả sử ta có $
 
 Ví dụ bài toán đối ngẫu:
 
-<div data-widget="convex-conjugate"></div>
+<div data-widget="convex-conjugate" data-lang="vi"></div>
 
 
 </details>

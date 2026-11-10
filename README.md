@@ -36,7 +36,7 @@ Gần như mọi thứ bạn cần sửa nằm trong **hai thư mục**: `src/da
 | Chữ trên menu, nút ("Blog", "Mục lục", ...) | `src/i18n/ui.ts` | Có 2 khối: `en` và `vi` |
 | Màu sắc, font | `src/styles/global.css` | Khối `:root` ở đầu file |
 | Dòng bản quyền, thứ tự link chân trang | `src/components/Footer.astro` | |
-| Tên miền khi deploy | `astro.config.mjs` | Dòng `site:` |
+| Địa chỉ website (tên miền) | tự động trên Vercel | Xem mục 8 |
 
 ## 3. Quy tắc viết file YAML (`src/data/*.yaml`)
 
@@ -185,6 +185,7 @@ personal website/
 │   ├── content.config.ts     quy định các trường hợp lệ trong YAML và bài viết
 │   └── config.ts             bật/tắt bình luận, bộ đếm lượt xem (dùng khi deploy)
 ├── public/                   file dùng nguyên trạng: avatar.jpg, favicon.svg, ảnh dự án
+├── notes/                    ghi chú riêng của bạn, KHÔNG đẩy lên GitHub (.gitignore)
 ├── scripts/                  lệnh npm run new / npm run translate
 ├── astro.config.mjs          cấu hình Astro, tên miền (site)
 └── package.json              danh sách thư viện và các lệnh npm
@@ -238,3 +239,22 @@ export default function mount(root) {
 ```
 
 Khung viền, nút, thanh trượt, ô số liệu và chú giải dùng chung các class `.w-*` trong `src/styles/global.css`, mục "Widget". Đổi màu các đường ở biến `--w-series-1`, `--w-series-2`, `--w-series-3` (mỗi biến có một giá trị cho nền sáng và một cho nền tối).
+
+## 8. Deploy và cập nhật website
+
+Website là trang tĩnh. Vercel lấy mã nguồn từ GitHub, tự chạy `npm run build` rồi đưa thư mục `dist/` lên mạng, không cần cấu hình gì thêm trong code.
+
+**Cập nhật sau khi đã deploy**: sửa bài hoặc dữ liệu, xem trước bằng `npm run dev`, rồi:
+
+```bash
+git add .
+git commit -m "Thêm bài Proximal Gradient Descent"
+git push
+```
+
+Khoảng một phút sau Vercel tự build và cập nhật website. Nếu build lỗi, website vẫn giữ bản cũ; xem lỗi ở tab **Deployments** trên Vercel.
+
+- **Địa chỉ website** (`site` trong `astro.config.mjs`) tự lấy từ Vercel: tên miền riêng nếu đã gắn, nếu chưa thì `<tên-dự-án>.vercel.app`. Sau khi gắn tên miền mới, bấm **Redeploy** một lần để sitemap, RSS và link chia sẻ dùng tên miền đó.
+- **Bài nháp**: chỉ bài có `draft: false` mới lên web. Link từ bài đã đăng tới bài còn nháp tự hiện thành chữ thường cho tới khi bài đó được đăng.
+- **Không đẩy lên GitHub** (xem `.gitignore`): `node_modules/`, `dist/`, `.astro/`, `notes/`, `_to_delete/`.
+- **DNS ở Cloudflare**: các bản ghi trỏ về Vercel để chế độ **DNS only** (đám mây xám). Bật proxy (đám mây cam) dễ gây lỗi chứng chỉ SSL hoặc vòng lặp chuyển hướng.

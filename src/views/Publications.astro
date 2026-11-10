@@ -2,7 +2,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PubItem from '../components/PubItem.astro';
-import { useTranslations, type Lang, type UIKey } from '../i18n/ui';
+import { localize, useTranslations, type Lang, type UIKey } from '../i18n/ui';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -29,6 +29,12 @@ const statuses = (['published', 'accepted', 'preprint', 'under-review'] as const
           <button type="button" class="chip" aria-pressed="false" data-filter={s}>{t(`status.${s}` as UIKey)}</button>
         ))}
       </div>
+    )}
+
+    {pubs.length === 0 && (
+      <p class="lead">
+        {t('pubs.empty')} <a href={`${localize('/portfolio', lang)}#projects`}>{t('nav.portfolio')}</a>.
+      </p>
     )}
 
     <div data-filter-target="pubs">

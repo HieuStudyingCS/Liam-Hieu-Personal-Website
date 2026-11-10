@@ -1,9 +1,43 @@
+# ---------------------------------------------------------------
+# Những thứ KHÔNG đẩy lên GitHub
+# (Vercel tự cài thư viện và tự build lại từ mã nguồn)
+# Lưu ý: chú thích phải nằm trên dòng riêng, không viết sau tên file.
+# ---------------------------------------------------------------
+
+# Thư viện và kết quả build: npm / Astro / Vercel tự sinh lại
 node_modules/
 dist/
 .astro/
+.vercel/
+
+# Biến môi trường, khoá bí mật
 .env
 .env.*
+!.env.example
+
+# Log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Rác của hệ điều hành
 .DS_Store
 Thumbs.db
-npm-debug.log*
-README.md
+desktop.ini
+
+# Editor: chỉ giữ danh sách extension gợi ý cho VS Code
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Ghi chú nghiên cứu cá nhân
+notes/
+
+# File chờ xoá
+_to_delete/
+*.tgz
+
+# Ảnh gốc ở thư mục gốc (website dùng bản trong public/)
+/assets/

@@ -1,24 +1,19 @@
-# VÍ DỤ — xóa và thay bằng publications thật. Mỗi mục cần "id" không trùng.
+# Publications — hiện chưa có. Khi có bài, xoá dòng "[]" ở cuối file và thêm mục theo mẫu dưới đây (bỏ dấu #).
 # status: published | accepted | preprint | under-review
 # selected: true  -> hiện ở trang chủ
-# Tên trùng với "authorNames" trong profile.yaml sẽ được in đậm; thêm * để đánh dấu đồng tác giả chính.
-- id: example-2026
-  title: "Example Paper: A Sample-Efficient Approach to Expensive Black-Box Optimization"
-  authors: ["Hieu Le-Trong", "Coauthor A", "Advisor B"]
-  venue: "Example Workshop on Optimization, 2026"
-  venueShort: "Example 2026"
-  year: 2026
-  status: preprint
-  selected: true
-  note:
-    en: "This is a placeholder entry — replace it with a real publication."
-    vi: "Đây là mục mẫu — hãy thay bằng publication thật."
-  links:
-    arxiv: https://arxiv.org/
-    code: https://github.com/
-  bibtex: |-
-    @misc{letrong2026example,
-      title  = {Example Paper: A Sample-Efficient Approach to Expensive Black-Box Optimization},
-      author = {Le-Trong, Hieu and A, Coauthor and B, Advisor},
-      year   = {2026}
-    }
+# Tên trùng với "authorNames" trong profile.yaml sẽ được in đậm.
+#
+# - id: letrong2027abc
+#   title: "Tên bài báo"
+#   authors: ["Trong-Hieu Le", "Coauthor A", "Advisor B"]
+#   venue: "Tên hội nghị / tạp chí 2027"
+#   venueShort: "ABC 2027"
+#   year: 2027
+#   status: preprint
+#   selected: true
+#   links:
+#     arxiv: https://arxiv.org/abs/...
+#     code: https://github.com/...
+#   bibtex: |-
+#     @misc{letrong2027abc, ...}
+[]
