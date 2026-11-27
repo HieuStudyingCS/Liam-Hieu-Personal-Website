@@ -240,7 +240,7 @@ $$
 \mathbb{E}_\mathcal{S}\Big[\underbrace{R\left(\hat{\theta}_{\text{ERM}}\right) - r\left(\hat{\theta}_{\text{ERM}}\right)}_{\text{Generalization Gap}}\Big] \geq 0
 $$
 
-In words, on average, the training error of the ERM never exceeds its generalization error. The reason is that $\hat{\theta}_{\text{ERM}}$ was chosen to fit $\mathcal{S}$ well, so $\mathcal{S}$ is no longer an independent sample for the predictor $f_{\hat{\theta}_{\text{ERM}}}$, and the unbiasedness argument of the previous section does not apply. For linear regression, the size of this gap is computed exactly in $(7)$ below: it equals $2\sigma^2 p/n$.
+In words, on average, the training error of the ERM never exceeds its generalization error. The reason is that $\hat{\theta}_{\text{ERM}}$ was chosen to fit $\mathcal{S}$ well, so $\mathcal{S}$ is no longer an independent sample for the predictor $f_{\hat{\theta}_{\text{ERM}}}$, and the unbiasedness argument of the previous section does not apply. For linear regression, the gap can be computed exactly in the section [How training set size and model complexity affect the error](#how-training-set-size-and-model-complexity-affect-the-error): when the new targets are observed at the same inputs as the training data, the expected gap is $2\sigma^2 p/n$, see $(7)$. With new random inputs, the gap is slightly larger, but it has the same order $p/n$.
 
 Now let $\mathcal{S}' = \{(X'_1, Y'_1), \dots, (X'_m, Y'_m)\}$ be a **test set** of $m$ new i.i.d. examples from $P$, independent of $\mathcal{S}$, and define the test error
 
@@ -368,7 +368,7 @@ With noise, two individuals may have identical inputs, $\mathbf{x}_A = \mathbf{x
 
 We now measure the error of $h^{(\mathcal{S})}$ against the noisy target $y_0 = f(\mathbf{x}_0) + \epsilon$ at the fixed test input $\mathbf{x}_0$. The noise $\epsilon$ of the test point is independent of the training set $\mathcal{S}$, and therefore independent of $h^{(\mathcal{S})}(\mathbf{x}_0)$.
 
-**Step 1: separate the noise.** Since $h^{(\mathcal{S})}(\mathbf{x}_0) - y_0 = \left(h^{(\mathcal{S})}(\mathbf{x}_0) - f(\mathbf{x}_0)\right) - \epsilon$,
+Since $h^{(\mathcal{S})}(\mathbf{x}_0) - y_0 = \left(h^{(\mathcal{S})}(\mathbf{x}_0) - f(\mathbf{x}_0)\right) - \epsilon$,
 
 $$
 \begin{align*}
@@ -387,7 +387,7 @@ where:
 - the cross term factorizes because $\epsilon$ is independent of $\mathcal{S}$, and it vanishes because $\mathbb{E}_{\epsilon}[\epsilon] = 0$;
 - the last term is $\mathbb{E}_{\epsilon}\left[\epsilon^2\right] = \operatorname{Var}(\epsilon) + \left(\mathbb{E}_{\epsilon}[\epsilon]\right)^2 = \sigma^2$.
 
-**Step 2: decompose the remaining term**, which proves $(3)$. Adding and subtracting the average hypothesis $\bar{h}(\mathbf{x}_0)$,
+Decompose the remaining term, which proves $(3)$. Adding and subtracting the average hypothesis $\bar{h}(\mathbf{x}_0)$,
 
 $$
 \begin{align*}
@@ -402,7 +402,7 @@ $$
 
 Here $\bar{h}(\mathbf{x}_0) - f(\mathbf{x}_0)$ does not depend on $\mathcal{S}$, so it can be taken out of $\mathbb{E}_{\mathcal{S}}$, and $\mathbb{E}_{\mathcal{S}}\left[h^{(\mathcal{S})}(\mathbf{x}_0)\right] - \bar{h}(\mathbf{x}_0) = 0$ by the definition of $\bar{h}$.
 
-**Putting the two steps together:**
+
 
 $$
 \mathbb{E}_{\mathcal{S},\epsilon}\left[\left(h^{(\mathcal{S})}(\mathbf{x}_0) - y_0\right)^2\right] = \underbrace{\mathbb{E}_{\mathcal{S}}\left[\left(h^{(\mathcal{S})}(\mathbf{x}_0) - \bar{h}(\mathbf{x}_0)\right)^2\right]}_{\texttt{variance}} + \underbrace{\left(\bar{h}(\mathbf{x}_0) - f(\mathbf{x}_0)\right)^2}_{\texttt{bias}^2} + \underbrace{\sigma^2}_{\text{noise}} \tag{4}
