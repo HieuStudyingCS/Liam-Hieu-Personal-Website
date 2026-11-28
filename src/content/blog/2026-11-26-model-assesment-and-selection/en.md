@@ -555,13 +555,149 @@ $$
 \end{align*}
 $$
 
-using the cyclic property of the trace. Since $\mathbb{E}[\hat{\mathbf{y}}] = \mathbf{P}\mathbf{f}$, the bias vector is $\mathbf{f} - \mathbf{P}\mathbf{f} = (\mathbf{I} - \mathbf{P})\mathbf{f}$, and the prediction error at the training inputs (for new targets $y_i' = f(\mathbf{x}_i) + \epsilon_i'$) is
+using the cyclic property of the trace, $\operatorname{tr}(\mathbf{A}\mathbf{B}) = \operatorname{tr}(\mathbf{B}\mathbf{A})$.
+
+**The bias of least squares.** In this setting the training inputs are fixed, so $\mathbf{X}$, $\mathbf{P}$ and $\mathbf{f}$ are constant, and only $\boldsymbol{\epsilon}$ is random, with $\mathbb{E}[\boldsymbol{\epsilon}] = \mathbf{0}$. For a constant matrix $\mathbf{A} \in \mathbb{R}^{n \times m}$ and a random vector $\mathbf{z} = (z_1, \dots, z_m)^\top$, the expectation passes through the product: $\mathbb{E}[\mathbf{A}\mathbf{z}] = \mathbf{A}\,\mathbb{E}[\mathbf{z}]$. Indeed, for each component $i$,
+
+$$
+\begin{align*}
+\mathbb{E}\left[(\mathbf{A}\mathbf{z})_i\right] &= \mathbb{E}\left[\sum_{j=1}^{m} A_{ij} z_j\right] && \text{(definition of the matrix-vector product)} \\
+&= \sum_{j=1}^{m} A_{ij}\,\mathbb{E}[z_j] && \text{(linearity of expectation, each } A_{ij} \text{ is constant)} \\
+&= \left(\mathbf{A}\,\mathbb{E}[\mathbf{z}]\right)_i && \text{(}\mathbb{E}[\mathbf{z}] = (\mathbb{E}[z_1], \dots, \mathbb{E}[z_m])^\top\text{)}
+\end{align*}
+$$
+
+and two vectors that agree in every component are equal. The linearity step does not require the $z_j$ to be independent, but it does require $A_{ij}$ to be non-random, which is why the training inputs are held fixed. Applying this with $\mathbf{A} = \mathbf{P}$ and $\mathbf{z} = \boldsymbol{\epsilon}$,
+
+$$
+\mathbb{E}[\hat{\mathbf{y}}] = \mathbb{E}\left[\mathbf{P}(\mathbf{f} + \boldsymbol{\epsilon})\right] = \mathbf{P}\mathbf{f} + \mathbf{P}\,\mathbb{E}[\boldsymbol{\epsilon}] = \mathbf{P}\mathbf{f} + \mathbf{P}\mathbf{0} = \mathbf{P}\mathbf{f}
+$$
+
+On average, least squares returns $\mathbf{P}\mathbf{f}$, the projection of the true values onto the column space of $\mathbf{X}$. The bias vector is therefore
+
+$$
+\mathbf{f} - \mathbb{E}[\hat{\mathbf{y}}] = \mathbf{f} - \mathbf{P}\mathbf{f} = (\mathbf{I} - \mathbf{P})\mathbf{f}
+$$
+
+the part of $\mathbf{f}$ that no linear combination of the features can represent, and the squared bias summed over the training inputs is $\sum_{i=1}^{n}\left(f(\mathbf{x}_i) - \mathbb{E}[\hat{y}_i]\right)^2 = \left\lVert(\mathbf{I} - \mathbf{P})\mathbf{f}\right\rVert_2^2$. Applying $(4)$ at each training input $\mathbf{x}_i$, with a new target $y_i' = f(\mathbf{x}_i) + \epsilon_i'$, and averaging over $i$, the prediction error at the training inputs is
 
 $$
 \frac{1}{n}\sum_{i=1}^{n}\operatorname{Err}(\mathbf{x}_i) = \sigma^2 + \frac{1}{n}\left\lVert(\mathbf{I} - \mathbf{P})\mathbf{f}\right\rVert_2^2 + \frac{p}{n}\sigma^2. \tag{6}
 $$
 
-Adding features enlarges the column space of $\mathbf{X}$, so the projection $\mathbf{P}\mathbf{f}$ gets closer to $\mathbf{f}$ and the bias term decreases, while the variance term $p\sigma^2/n$ grows **linearly** in the number of features.
+**Why the bias term decreases.** We now prove that adding features can never increase the bias term $\frac{1}{n}\left\lVert(\mathbf{I} - \mathbf{P})\mathbf{f}\right\rVert_2^2$ of $(6)$. Throughout, the design matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$ has the training inputs as rows (its $i$-th row is $\mathbf{x}_i^\top$) and full column rank: its $p$ columns are linearly independent, so $\mathbf{X}^\top\mathbf{X}$ is invertible, and $\mathbf{X}\mathbf{c} = \mathbf{0}$ holds only for $\mathbf{c} = \mathbf{0}$.
+
+*The column space.* The column space of $\mathbf{X}$ is the set of all linear combinations of its columns:
+
+$$
+\operatorname{col}(\mathbf{X}) = \left\{\mathbf{X}\mathbf{b} : \mathbf{b} \in \mathbb{R}^p\right\} \subseteq \mathbb{R}^n
+$$
+
+A vector $\mathbf{b} \in \mathbb{R}^p$ is a choice of coefficients for the $p$ features, and the $i$-th component of $\mathbf{X}\mathbf{b}$ is $\mathbf{x}_i^\top\mathbf{b}$, the prediction of the linear model $\mathbf{x} \mapsto \mathbf{b}^\top\mathbf{x}$ at the training input $\mathbf{x}_i$. So $\operatorname{col}(\mathbf{X})$ is exactly the set of prediction vectors that a linear model with these features can produce, and the statement "$\mathbf{v} \in \operatorname{col}(\mathbf{X})$" means "$\mathbf{v} = \mathbf{X}\mathbf{b}$ for some $\mathbf{b} \in \mathbb{R}^p$". The column space is closed under subtraction: if $\mathbf{v}_1 = \mathbf{X}\mathbf{b}_1$ and $\mathbf{v}_2 = \mathbf{X}\mathbf{b}_2$, then $\mathbf{v}_1 - \mathbf{v}_2 = \mathbf{X}(\mathbf{b}_1 - \mathbf{b}_2)$ is again in $\operatorname{col}(\mathbf{X})$, with coefficient vector $\mathbf{b}_1 - \mathbf{b}_2$.
+
+*Step 1: $\mathbf{P}\mathbf{f}$ belongs to the column space.* Define the coefficient vector
+
+$$
+\mathbf{b}^\star = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{f} \in \mathbb{R}^p
+$$
+
+which exists because $\mathbf{X}^\top\mathbf{X}$ is invertible. Then
+
+$$
+\mathbf{P}\mathbf{f} = \mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{f} = \mathbf{X}\left((\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{f}\right) = \mathbf{X}\mathbf{b}^\star
+$$
+
+so $\mathbf{P}\mathbf{f} \in \operatorname{col}(\mathbf{X})$: it is the prediction vector of the linear model with coefficients $\mathbf{b}^\star$. These are the least squares coefficients we would obtain if we could fit the true values $\mathbf{f}$ directly, without noise.
+
+*Step 2: the residual is orthogonal to the column space.* Let
+
+$$
+\mathbf{e} = (\mathbf{I} - \mathbf{P})\mathbf{f} = \mathbf{f} - \mathbf{P}\mathbf{f}
+$$
+
+be the part of $\mathbf{f}$ that the linear model leaves unexplained. Multiplying by $\mathbf{X}^\top$,
+
+$$
+\begin{align*}
+\mathbf{X}^\top\mathbf{e} &= \mathbf{X}^\top\mathbf{f} - \mathbf{X}^\top\mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{f} \\
+&= \mathbf{X}^\top\mathbf{f} - \mathbf{I}_p\mathbf{X}^\top\mathbf{f} \\
+&= \mathbf{0}
+\end{align*}
+$$
+
+The $j$-th component of $\mathbf{X}^\top\mathbf{e}$ is the inner product of the $j$-th column of $\mathbf{X}$ with $\mathbf{e}$, so $\mathbf{e}$ is orthogonal to every column of $\mathbf{X}$. It is then orthogonal to every vector of the column space: for any $\mathbf{u} = \mathbf{X}\mathbf{c} \in \operatorname{col}(\mathbf{X})$, with $\mathbf{c} \in \mathbb{R}^p$,
+
+$$
+\mathbf{e}^\top\mathbf{u} = \mathbf{e}^\top\mathbf{X}\mathbf{c} = \left(\mathbf{X}^\top\mathbf{e}\right)^\top\mathbf{c} = \mathbf{0}^\top\mathbf{c} = 0
+$$
+
+*Step 3: $\mathbf{P}\mathbf{f}$ is the point of the column space closest to $\mathbf{f}$.* Take an arbitrary point of the column space, that is, $\mathbf{v} = \mathbf{X}\mathbf{b}$ for an arbitrary coefficient vector $\mathbf{b} \in \mathbb{R}^p$. Adding and subtracting $\mathbf{P}\mathbf{f}$, and using $\mathbf{P}\mathbf{f} = \mathbf{X}\mathbf{b}^\star$ from Step 1,
+
+$$
+\mathbf{f} - \mathbf{v} = \underbrace{(\mathbf{f} - \mathbf{P}\mathbf{f})}_{=\,\mathbf{e}} + \underbrace{(\mathbf{P}\mathbf{f} - \mathbf{v})}_{=\,\mathbf{X}\mathbf{b}^\star - \mathbf{X}\mathbf{b}\,=\,\mathbf{X}(\mathbf{b}^\star - \mathbf{b})}
+$$
+
+The second part is the difference of two points of the column space, so it belongs to the column space, with coefficient vector $\mathbf{c} = \mathbf{b}^\star - \mathbf{b}$. Expanding the squared norm with $\lVert\mathbf{a} + \mathbf{d}\rVert_2^2 = \lVert\mathbf{a}\rVert_2^2 + 2\,\mathbf{a}^\top\mathbf{d} + \lVert\mathbf{d}\rVert_2^2$,
+
+$$
+\begin{align*}
+\left\lVert\mathbf{f} - \mathbf{v}\right\rVert_2^2 &= \left\lVert\mathbf{e} + \mathbf{X}(\mathbf{b}^\star - \mathbf{b})\right\rVert_2^2 \\
+&= \left\lVert\mathbf{e}\right\rVert_2^2 + 2\,\mathbf{e}^\top\mathbf{X}(\mathbf{b}^\star - \mathbf{b}) + \left\lVert\mathbf{X}(\mathbf{b}^\star - \mathbf{b})\right\rVert_2^2 \\
+&= \left\lVert\mathbf{e}\right\rVert_2^2 + 0 + \left\lVert\mathbf{X}(\mathbf{b}^\star - \mathbf{b})\right\rVert_2^2 && \text{(Step 2 with } \mathbf{c} = \mathbf{b}^\star - \mathbf{b}\text{)} \\
+&\ge \left\lVert\mathbf{e}\right\rVert_2^2 = \left\lVert(\mathbf{I} - \mathbf{P})\mathbf{f}\right\rVert_2^2
+\end{align*}
+$$
+
+Equality holds if and only if $\mathbf{X}(\mathbf{b}^\star - \mathbf{b}) = \mathbf{0}$, which by full column rank means $\mathbf{b} = \mathbf{b}^\star$, that is, $\mathbf{v} = \mathbf{P}\mathbf{f}$. Since $\mathbf{v}$ was an arbitrary point of the column space, we have proved
+
+$$
+\left\lVert(\mathbf{I} - \mathbf{P})\mathbf{f}\right\rVert_2^2 = \min_{\mathbf{v} \in \operatorname{col}(\mathbf{X})} \left\lVert\mathbf{f} - \mathbf{v}\right\rVert_2^2 = \min_{\mathbf{b} \in \mathbb{R}^p} \sum_{i=1}^{n}\left(f(\mathbf{x}_i) - \mathbf{b}^\top\mathbf{x}_i\right)^2
+$$
+
+with the minimum attained only at $\mathbf{v} = \mathbf{P}\mathbf{f}$. Geometrically, this is the Pythagorean theorem: $\mathbf{e}$ is perpendicular to the column space, so moving away from $\mathbf{P}\mathbf{f}$ inside the column space can only increase the distance to $\mathbf{f}$. In words, the bias term of $(6)$ is the smallest squared error that **any** linear model with these features could achieve against the true function at the training inputs. It measures how well the features can approximate $f$, and it does not depend on the noise.
+
+*Step 4: compare nested sets of features.* Let
+
+$$
+\mathbf{X}_1 \in \mathbb{R}^{n \times p_1}, \qquad \mathbf{X}_2 = \begin{pmatrix}\mathbf{X}_1 & \mathbf{X}_{\text{new}}\end{pmatrix} \in \mathbb{R}^{n \times p_2}, \qquad p_2 > p_1
+$$
+
+be two design matrices with full column rank, where $\mathbf{X}_2$ contains all the columns of $\mathbf{X}_1$ followed by $p_2 - p_1$ new features $\mathbf{X}_{\text{new}}$, and let $\mathbf{P}_1$ and $\mathbf{P}_2$ be the corresponding projection matrices.
+
+First, $\operatorname{col}(\mathbf{X}_1) \subseteq \operatorname{col}(\mathbf{X}_2)$. Take any $\mathbf{v} \in \operatorname{col}(\mathbf{X}_1)$, so $\mathbf{v} = \mathbf{X}_1\mathbf{b}_1$ for some $\mathbf{b}_1 \in \mathbb{R}^{p_1}$, and append $p_2 - p_1$ zeros to obtain $\mathbf{b}_2 = \begin{pmatrix}\mathbf{b}_1 \\ \mathbf{0}\end{pmatrix} \in \mathbb{R}^{p_2}$. By block multiplication,
+
+$$
+\mathbf{X}_2\mathbf{b}_2 = \begin{pmatrix}\mathbf{X}_1 & \mathbf{X}_{\text{new}}\end{pmatrix}\begin{pmatrix}\mathbf{b}_1 \\ \mathbf{0}\end{pmatrix} = \mathbf{X}_1\mathbf{b}_1 + \mathbf{X}_{\text{new}}\mathbf{0} = \mathbf{v}
+$$
+
+so $\mathbf{v} \in \operatorname{col}(\mathbf{X}_2)$. In words, the larger model can reproduce any prediction of the smaller one by setting the coefficients of the new features to zero.
+
+In particular, $\mathbf{P}_1\mathbf{f} \in \operatorname{col}(\mathbf{X}_1) \subseteq \operatorname{col}(\mathbf{X}_2)$ by Step 1 applied to $\mathbf{X}_1$. Step 3 applied to $\mathbf{X}_2$ says that $\mathbf{P}_2\mathbf{f}$ is the point of $\operatorname{col}(\mathbf{X}_2)$ closest to $\mathbf{f}$, so it is at least as close as the particular candidate $\mathbf{v} = \mathbf{P}_1\mathbf{f}$:
+
+$$
+\left\lVert(\mathbf{I} - \mathbf{P}_2)\mathbf{f}\right\rVert_2^2 = \min_{\mathbf{v} \in \operatorname{col}(\mathbf{X}_2)} \left\lVert\mathbf{f} - \mathbf{v}\right\rVert_2^2 \le \left\lVert\mathbf{f} - \mathbf{P}_1\mathbf{f}\right\rVert_2^2 = \left\lVert(\mathbf{I} - \mathbf{P}_1)\mathbf{f}\right\rVert_2^2
+$$
+
+*When is the decrease strict?* Let $\mathbf{e}_1 = (\mathbf{I} - \mathbf{P}_1)\mathbf{f}$ be the residual of the smaller model. By the uniqueness part of Step 3, the inequality above is an equality if and only if $\mathbf{P}_2\mathbf{f} = \mathbf{P}_1\mathbf{f}$, that is, if and only if $\mathbf{e}_1$ is also the residual of the larger model.
+
+- If $\mathbf{P}_2\mathbf{f} = \mathbf{P}_1\mathbf{f}$, then $\mathbf{e}_1 = (\mathbf{I} - \mathbf{P}_2)\mathbf{f}$, and Step 2 applied to $\mathbf{X}_2$ gives $\mathbf{X}_2^\top\mathbf{e}_1 = \mathbf{0}$.
+- Conversely, if $\mathbf{X}_2^\top\mathbf{e}_1 = \mathbf{0}$, then $\mathbf{e}_1$ is orthogonal to $\operatorname{col}(\mathbf{X}_2)$, and the computation of Step 3, with $\mathbf{P}_1\mathbf{f} \in \operatorname{col}(\mathbf{X}_2)$ in place of $\mathbf{P}\mathbf{f}$ and $\mathbf{e}_1$ in place of $\mathbf{e}$, shows that $\mathbf{P}_1\mathbf{f}$ is the closest point of $\operatorname{col}(\mathbf{X}_2)$, so $\mathbf{P}_2\mathbf{f} = \mathbf{P}_1\mathbf{f}$.
+
+Since $\mathbf{X}_2^\top\mathbf{e}_1 = \begin{pmatrix}\mathbf{X}_1^\top\mathbf{e}_1 \\ \mathbf{X}_{\text{new}}^\top\mathbf{e}_1\end{pmatrix}$ and $\mathbf{X}_1^\top\mathbf{e}_1 = \mathbf{0}$ by Step 2 applied to $\mathbf{X}_1$, the bias decreases **strictly** if and only if
+
+$$
+\mathbf{X}_{\text{new}}^\top(\mathbf{I} - \mathbf{P}_1)\mathbf{f} \neq \mathbf{0}
+$$
+
+that is, if at least one new feature is not orthogonal to the part of $\mathbf{f}$ that the old features could not explain. In particular, once $\mathbf{f} \in \operatorname{col}(\mathbf{X}_1)$, we have $\mathbf{e}_1 = \mathbf{0}$: the bias is already zero, and no new feature can reduce it further.
+
+*Conclusion.* Dividing by $n$ and combining with $\operatorname{tr}(\mathbf{P}_k) = p_k$ from the variance computation, the two terms of $(6)$ move in opposite directions:
+
+$$
+\underbrace{\frac{1}{n}\left\lVert(\mathbf{I} - \mathbf{P}_2)\mathbf{f}\right\rVert_2^2}_{\texttt{bias}^2 \text{ with } p_2 \text{ features}} \le \underbrace{\frac{1}{n}\left\lVert(\mathbf{I} - \mathbf{P}_1)\mathbf{f}\right\rVert_2^2}_{\texttt{bias}^2 \text{ with } p_1 \text{ features}}, \qquad \underbrace{\frac{p_2}{n}\sigma^2}_{\texttt{variance} \text{ with } p_2} > \underbrace{\frac{p_1}{n}\sigma^2}_{\texttt{variance} \text{ with } p_1}
+$$
+
+Each new feature adds exactly $\sigma^2/n$ to the variance term, while it reduces the bias term only if it explains part of the remaining residual. Once the features can represent $f$, every additional feature only adds variance. This is the bias–variance tradeoff of $(6)$, proved for linear regression.
 
 The experiment is available at [Bias-Variance and Model Complexity](https://colab.research.google.com/drive/15270CyFPN04JFxO4D_0WJ-VRn-1XsTYu?usp=sharing).
 
